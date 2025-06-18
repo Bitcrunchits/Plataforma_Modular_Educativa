@@ -13,14 +13,8 @@ materiaRouter.get('/:id', materiaController.getMateriasById);
 // POST /materias (crear materias)
 materiaRouter.post('/', materiaController.createMateria);
 
-// PATCH /materias (delete materias, desactivar)
-materiaRouter.patch('/:id', materiaController.deleteMateria);
-
-// PATCH /materias (reactivar materias)
-materiaRouter.put('/:id', materiaController.reactivarMateria);
-
 //UPDATE /materias/:id (actualizar materias)
-// materiaRouter.put('/:id', materiaController.updateMateria);
+materiaRouter.patch('/:id', materiaController.updateMateria);
 
 
 
