@@ -26,7 +26,7 @@ async function getMateriasById ( req, res) {
         console.error('Error al obtener materia por ID: ', err); //esto es el manejo de errores si no conecta a la base o pasa algo en el camino nos devolvera este error capturado por el cath.
         res.status(500).json({ message: 'Error de servidor'});
     };
-}};
+};
 
 //! FUNCION ASINC CREATE con "validacion de profesor autorizado"
 async function createMateria(req, res) {
@@ -53,7 +53,7 @@ async function createMateria(req, res) {
     }
 }
 
-
+//! FUNCION ASINC update
 async function updateMateria(req, res) {
     const { id } =req.params; //capturamos id del params
     const { nom_materia, descripcion, id_profesor } = req.body; //capturamos los datos del body desestructurandolos
