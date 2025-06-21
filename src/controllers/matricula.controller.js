@@ -4,31 +4,31 @@ import { pool } from '../db/db.js'
 //!funcion asincrona findall
 async function getAllMatricula(req, res) {
     try {
-        const[rows] = await pool.query('SELECT * FROM matricula');
+        const [rows] = await pool.query('SELECT * FROM matricula');
         res.json(rows);
     } catch (err) {
-        console.error("Error al obtener el listado de matriculas:",err);
-        res.status(500).json({ message: 'Error interno del Servidor'});
+        console.error("Error al obtener el listado de matriculas:", err);
+        res.status(500).json({ message: 'Error interno del Servidor' });
     };
-    
+
 };
 
 //! FUNCION asincrona findone 
-async function getMatriculaById ( req, res) {
+async function getMatriculaById(req, res) {
     const { id } = req.params //creamos una constante para guardar el dato que buscamos 
     try {
-        const [rows] = await pool.query('SELECT * FROM matricula WHERE id_matricula = ?', [id] ); // luego creamos otras constante para guardar los datos del array que vendra del servidor luego de la peticion 
+        const [rows] = await pool.query('SELECT * FROM matricula WHERE id_matricula = ?', [id]); // luego creamos otras constante para guardar los datos del array que vendra del servidor luego de la peticion 
         if (rows.length === 0) {    //leemos el array con un length y lo comparamos con cero por si no hay nada en la respons y que retorne un res status con un json mensage.
-            return res.status(404).json({message: 'matricula no encontrada'})
+            return res.status(404).json({ message: 'matricula no encontrada' })
         }
-        res.json (rows [0]); // en su defecto nos response nos traera un JSON con el contenido de la DB y el cero marca el primer elemento del array
+        res.json(rows[0]); // en su defecto nos response nos traera un JSON con el contenido de la DB y el cero marca el primer elemento del array
     } catch (err) {
         console.error('Error al obtener matricula por ID: ', err); //esto es el manejo de errores si no conecta a la base o pasa algo en el camino nos devolvera este error capturado por el cath.
-        res.status(500).json({ message: 'Error de servidor'});
+        res.status(500).json({ message: 'Error de servidor' });
     };
 };
 
-//! FUNCION ASINC CREATE con "validacion de profesor autorizado"
+//! FUNCION ASINC CREATE con "validacion de profesor, materia y matricula no repetida"
 async function createMatricula(req, res) {
     const { id_usuario, id_materia } = req.body; // id_usuario es el ID del profesor
 
@@ -49,7 +49,7 @@ async function createMatricula(req, res) {
             return res.status(403).json({ message: 'Acceso denegado: El profesor no está asignado a esta materia o materia inexistente.' });
         }
 
-        // 3. Obtener la lista de alumnos de esa materia (esto es solo para pruebas!!)
+        // 3. Obtener la lista de alumnos de esa materia
         const [alumnos] = await pool.query('SELECT * FROM Users WHERE NOT rol = "profesor"');
         // 4. Obtener el id_alumno de la lista
         const id_alumno = alumnos[0].id_usuario;
@@ -72,7 +72,7 @@ async function createMatricula(req, res) {
             [id_alumno, id_materia]
         );
 
-        res.status(201).json({ message: 'Matrícula creada exitosamente.', id_matricula: result.insertId });
+        res.status(201).json({ message: 'Matrícula creada exitosamente.', id_matricula: result.insertId }); //result.insert id nos imprime en consola el nuevo id de la nueva matricula
 
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
@@ -87,8 +87,8 @@ async function createMatricula(req, res) {
 // accion no valida para esta entidad porque se crean pero no se pueden modificar ni borrar por niguno de los usuarios
 
 
-export const matriculaController = { 
-       getAllMatricula,
-       getMatriculaById,
-         createMatricula
+export const matriculaController = {
+    getAllMatricula,
+    getMatriculaById,
+    createMatricula
 };
