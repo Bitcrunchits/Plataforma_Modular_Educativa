@@ -3,27 +3,27 @@ import { pool } from '../db/db.js'
 //!funcion asincrona findall
 async function getAllUser(req, res) {
     try {
-        const[rows] = await pool.query('SELECT * FROM users');
+        const [rows] = await pool.query('SELECT * FROM users');
         res.json(rows);
     } catch (err) {
-        console.error("Error al obtener el listado de users:",err);
-        res.status(500).json({ message: 'Error interno del Servidor'});
+        console.error("Error al obtener el listado de users:", err);
+        res.status(500).json({ message: 'Error interno del Servidor' });
     };
-    
+
 };
 
 //! FUNCION asincrona findone 
-async function getUserById ( req, res) {
+async function getUserById(req, res) {
     const { id } = req.params //creamos una constante para guardar el dato que buscamos 
     try {
-        const [rows] = await pool.query('SELECT * FROM users WHERE id_usuario = ?', [id] ); // luego creamos otras constante para guardar los datos del array que vendra del servidor luego de la peticion 
+        const [rows] = await pool.query('SELECT * FROM users WHERE id_usuario = ?', [id]); // luego creamos otras constante para guardar los datos del array que vendra del servidor luego de la peticion 
         if (rows.length === 0) {    //leemos el array con un length y lo comparamos con cero por si no hay nada en la respons y que retorne un res status con un json mensage.
-            return res.status(404).json({message: 'usuario no encontrado'})
+            return res.status(404).json({ message: 'usuario no encontrado' })
         }
-        res.json (rows [0]); // en su defecto nos response nos traera un JSON con el contenido de la DB y el cero marca el primer elemento del array
+        res.json(rows[0]); // en su defecto nos response nos traera un JSON con el contenido de la DB y el cero marca el primer elemento del array
     } catch (err) {
         console.error('Error al obtener usuario por ID: ', err); //esto es el manejo de errores si no conecta a la base o pasa algo en el camino nos devolvera este error capturado por el cath.
-        res.status(500).json({ message: 'Error de servidor'});
+        res.status(500).json({ message: 'Error de servidor' });
     };
 };
 
@@ -115,7 +115,7 @@ async function updateUser(req, res) {
     }
 }
 
-export const userController = { 
+export const userController = {
     getAllUser,
     getUserById,
     createUser,

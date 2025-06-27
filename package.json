@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "tpBackend",
   "license": "ISC",
-  "author": "Adrian Burdiles",
+  "author": "Adrian Burdiles, Lucas Lagos, Agustin Soto, Spagnolo Emiliano",
   "type": "module",
   "main": "src/index.js",
   "scripts": {

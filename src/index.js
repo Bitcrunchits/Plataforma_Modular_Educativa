@@ -1,8 +1,6 @@
 import app from './app.js'; //importamos app para crear el servidor
 import { testConnection } from './db/db.js';
 
-
-
 const main = () => {
     const port = app.get('port');
 

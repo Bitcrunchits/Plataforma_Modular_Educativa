@@ -7,7 +7,7 @@ import entregaRouter from './routes/entrega.route.js'; // Importamos el router d
 import userRouter from './routes/user.route.js'; // Importamos el router de usuarios
 
 
-// const port = envs.PORT || 3001; // Definimos el puerto del servidor, si no se define en las variables de entorno, usará el 3000
+const port = envs.PORT || 3001; // Definimos el puerto del servidor, si no se define en las variables de entorno, usará el 3000
 
 const app = express(); //creamos la constante app que creará el servidor
 

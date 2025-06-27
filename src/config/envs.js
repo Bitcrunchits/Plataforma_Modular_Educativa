@@ -1,7 +1,7 @@
 import joi from 'joi';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config( { patch: './src/config/.env' } ); //cargamos las variables de entorno desde el archivo .env
 
 const envsSchema = joi.object({
     PORT: joi.number().required(),
