@@ -58,7 +58,7 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
 
 Para iniciar realiza los siguientes pasos:
 
-```bash
+
 1) Crear la base de datos, vacía solo el nombre en XAMPP o medio ambiente elegido.
     a)Abrir el archivo SEED2 y en la linea de codigo 16 (await connection.query('USE nombre base de datos creada ;');)
     colocamos el nombre de la DB vacia que creamos,  ej: await connection.query('USE escuela ;');
