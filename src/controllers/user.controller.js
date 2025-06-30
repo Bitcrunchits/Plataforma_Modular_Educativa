@@ -64,13 +64,13 @@ async function createUser(req, res) {
 //! FUNCION ASINC update se agregaron secuencias prohibidos y numeros en este campo.
 async function updateUser(req, res) {
     const { id } = req.params; // Capturamos el id del params
-    const { nombre } = req.body; // Capturamos el nombre del body
+    const { nombre, rol } = req.body; // Capturamos el nombre y el rol del body
 
-    if (!nombre) {
-        return res.status(400).json({ message: 'El nombre es obligatorio para actualizar el usuario.' });
+    if (!nombre && !rol) {
+        return res.status(400).json({ message: 'Debe proporcionar al menos un nombre o rol para actualizar el usuario.' });
     }
 
-    // Validación de letras repetidas, secuencias prohibidas y números
+    // Validación del nombre (EXISTENTE)
     function validarNombre(nombre) {
         // Diccionario de secuencias prohibidas
         const secuenciasProhibidas = ['abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl', 'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv', 'uvw', 'vwx', 'wxy', 'xyz', 'zyx', 'yxw', 'xwv', 'wvu', 'vut', 'uts', 'tsr', 'srq', 'rqp', 'qpo', 'pon', 'onm', 'nml', 'mlk', 'lkj', 'kji', 'jih', 'ihg', 'hgf', 'gfe', 'fed', 'edc', 'dcb', 'cba'];
@@ -91,17 +91,52 @@ async function updateUser(req, res) {
         return null; // El nombre es válido
     }
 
-    const validacionNombre = validarNombre(nombre);
-    if (validacionNombre) {
-        return res.status(400).json({ message: validacionNombre });
+    // Validación del rol
+    function validarRol(rol) {
+        const rolesPermitidos = ['admin', 'profesor', 'alumno']; // Lista de roles permitidos
+        if (!rolesPermitidos.includes(rol)) {
+            return 'El rol proporcionado no es válido. Los roles permitidos son: ' + rolesPermitidos.join(', ');
+        }
+        return null;
     }
 
+    if (nombre) {
+        const validacionNombre = validarNombre(nombre);
+        if (validacionNombre) {
+            return res.status(400).json({ message: validacionNombre });
+        }
+    }
+
+    if (rol) {
+        const validacionRol = validarRol(rol);
+        if (validacionRol) {
+            return res.status(400).json({ message: validacionRol });
+        }
+    }
 
     try {
-        const [result] = await pool.query(
-            'UPDATE Users SET nombre = ? WHERE id_usuario = ?',
-            [nombre, id]
-        );
+        // Construir la consulta UPDATE dinámicamente
+        const updates = [];
+        const params = [];
+
+        if (nombre) {
+            updates.push('nombre = ?');
+            params.push(nombre);
+        }
+
+        if (rol) {
+            updates.push('rol = ?');
+            params.push(rol);
+        }
+
+        if (updates.length === 0) {
+            return res.status(400).json({ message: 'No se proporcionaron datos para actualizar' });
+        }
+
+        let query = 'UPDATE Users SET ' + updates.join(', ') + ' WHERE id_usuario = ?';
+        params.push(id);
+
+        const [result] = await pool.query(query, params);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Usuario no encontrado o no se realizaron cambios.' });
@@ -114,6 +149,7 @@ async function updateUser(req, res) {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 }
+
 
 export const userController = {
     getAllUser,
