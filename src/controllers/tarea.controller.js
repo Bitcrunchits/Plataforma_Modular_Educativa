@@ -2,14 +2,48 @@ import { pool } from '../db/db.js';
 
 //!funcion asincrona findall
 async function getAllTarea(req, res) {
+    const { id_usuario } = req.query; // Obtener el id_usuario de la query string
+
     try {
-        const [rows] = await pool.query('SELECT * FROM tarea');
-        res.json(rows);
+        let query = 'SELECT * FROM tarea';
+        let params = [];
+
+        if (id_usuario) {
+            // Si se proporciona id_usuario, buscar las tareas asignadas a ese alumno
+            query = `
+                SELECT
+                    Tarea.id_tarea,
+                    Tarea.titulo,
+                    Tarea.descripcion,
+                    Tarea.fecha_entrega,
+                    Tarea.id_materia
+                FROM
+                    Tarea
+                INNER JOIN
+                    Entrega ON Tarea.id_tarea = Entrega.id_tarea
+                WHERE
+                    Entrega.id_usuario = ?
+            `;
+            params = [id_usuario];
+        }
+
+        const [rows] = await pool.query(query, params);
+
+        if (id_usuario) {
+            // Si se buscaron tareas por alumno, enviar la respuesta con las tareas
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron tareas para el alumno especificado' });
+            }
+            res.json({ alumno_id: id_usuario, tareas: rows }); // Enviar un objeto con el alumno_id y las tareas
+        } else {
+            // Si se buscaron todas las tareas, enviar la respuesta con las tareas
+            res.json(rows);
+        }
+
     } catch (err) {
-        console.error("Error al obtener el listado de materias:", err);
+        console.error("Error al obtener el listado de tareas:", err);
         res.status(500).json({ message: 'Error interno del Servidor' });
     };
-
 };
 
 //! FUNCION asincrona findone 

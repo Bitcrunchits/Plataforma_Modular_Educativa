@@ -3,14 +3,46 @@ import { pool } from '../db/db.js'
 
 //!funcion asincrona findall
 async function getAllMaterias(req, res) {
+    const { id_materia } = req.query; // Obtener el id_materia de la query string
+
     try {
-        const [rows] = await pool.query('SELECT * FROM materia');
-        res.json(rows);
+        let query = 'SELECT * FROM materia';
+        let params = [];
+
+        if (id_materia) {
+            // Si se proporciona id_materia, buscar alumnos de esa materia
+            query = `
+                SELECT
+                    Users.id_usuario,
+                    Users.nombre,
+                    Users.email
+                FROM
+                    Users
+                INNER JOIN
+                    Matricula ON Users.id_usuario = Matricula.id_usuario
+                WHERE
+                    Matricula.id_materia = ? AND Users.rol = 'alumno'
+            `;
+            params = [id_materia];
+        }
+
+        const [rows] = await pool.query(query, params);
+
+        if (id_materia) {
+            // Si se buscaron alumnos por materia, enviar la respuesta con los alumnos
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron alumnos para la materia especificada' });
+            }
+            res.json({ materia_id: id_materia, alumnos: rows }); // Enviar un objeto con la materia_id y los alumnos
+        } else {
+            // Si se buscaron todas las materias, enviar la respuesta con las materias
+            res.json(rows);
+        }
+
     } catch (err) {
-        console.error("Error al obtener el listado de materias:", err);
+        console.error("Error al obtener el listado de materias/alumnos:", err);
         res.status(500).json({ message: 'Error interno del Servidor' });
     };
-
 };
 
 //! FUNCION asincrona findone 

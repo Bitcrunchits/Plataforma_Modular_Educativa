@@ -2,14 +2,35 @@ import { pool } from '../db/db.js'
 
 //!funcion asincrona findall
 async function getAllUser(req, res) {
+    const { rol } = req.query; // Obtener el rol de la query string
+
     try {
-        const [rows] = await pool.query('SELECT * FROM users');
-        res.json(rows);
+        let query = 'SELECT * FROM users';
+        let params = [];
+
+        if (rol === 'profesor') {
+            // Si se proporciona rol=profesor, buscar solo los usuarios con ese rol
+            query = 'SELECT * FROM users WHERE rol = ?';
+            params = [rol];
+        }
+
+        const [rows] = await pool.query(query, params);
+
+        if (rol === 'profesor') {
+            // Si se buscaron profesores, enviar la respuesta con los profesores
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron usuarios con el rol de profesor' });
+            }
+            res.json({ rol: rol, usuarios: rows }); // Enviar un objeto con el rol y los usuarios
+        } else {
+            // Si se buscaron todos los usuarios, enviar la respuesta con los usuarios
+            res.json(rows);
+        }
+
     } catch (err) {
         console.error("Error al obtener el listado de users:", err);
         res.status(500).json({ message: 'Error interno del Servidor' });
     };
-
 };
 
 //! FUNCION asincrona findone 

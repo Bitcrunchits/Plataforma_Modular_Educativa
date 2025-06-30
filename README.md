@@ -56,7 +56,12 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
 
 ## Uso
 
-Para iniciar el servidor, ejecuta el siguiente comando:
+Para iniciar realiza los siguientes pasos:
 
 ```bash
+1) Crear la base de datos, vacía solo el nombre en XAMPP o medio ambiente elegido.
+2) Crear un archivo .env y agregar el nombre de la DB, Hacer lo mismo en .envs.
+3) iniciar el servidor 
 npm run dev
+-- al iniciar el servidor se ejecutará el archivo SEED2 desde index.js. Este SEED genera el contenido de la DB completa
+-- incluyendo el admin con las claves genericas "que deben ser cambiadas al ingresar".

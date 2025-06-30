@@ -3,16 +3,51 @@ import { pool } from '../db/db.js'
 
 //!funcion asincrona findall
 async function getAllMatricula(req, res) {
+    const { id_usuario } = req.query; // Obtener el id_usuario de la query string
+
     try {
-        const [rows] = await pool.query('SELECT * FROM matricula');
-        res.json(rows);
+        let query = `
+          SELECT
+            Matricula.id_matricula,
+            Matricula.id_materia,
+            Materia.nom_materia,
+            Users.nombre AS nombre_alumno,
+            Users.email AS email_alumno
+          FROM
+            Matricula
+          INNER JOIN
+            Materia ON Matricula.id_materia = Materia.id_materia
+          INNER JOIN
+            Users ON Matricula.id_usuario = Users.id_usuario
+          WHERE
+            Users.rol = 'alumno'  -- Filtrar por rol alumno
+        `;
+        let params = [];
+
+        if (id_usuario) {
+            // Si se proporciona id_usuario, buscar las matrículas de ese alumno
+            query += ` AND Matricula.id_usuario = ?`; // Agregar filtro por id_usuario
+            params = [id_usuario];
+        }
+         query +=  ` ORDER BY Users.nombre` //Ordenar por nombre de alumno.
+        const [rows] = await pool.query(query, params);
+
+        if (id_usuario) {
+            // Si se buscaron matrículas por alumno, enviar la respuesta con las matrículas
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron matrículas para el alumno especificado' });
+            }
+            res.json({ alumno_id: id_usuario, matriculas: rows }); // Enviar un objeto con el alumno_id y las matrículas
+        } else {
+            // Si se buscaron todas las matrículas, enviar la respuesta con las matrículas
+            res.json(rows);
+        }
+
     } catch (err) {
         console.error("Error al obtener el listado de matriculas:", err);
         res.status(500).json({ message: 'Error interno del Servidor' });
     };
-
 };
-
 //! FUNCION asincrona findone 
 async function getMatriculaById(req, res) {
     const { id } = req.params //creamos una constante para guardar el dato que buscamos 

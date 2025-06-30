@@ -3,14 +3,49 @@ import { pool } from '../db/db.js'
 
 //!funcion asincrona findall
 async function getAllEntrega(req, res) {
+    const { id_materia } = req.query; // Obtener el id_materia de la query string
+
     try {
-        const[rows] = await pool.query('SELECT * FROM entrega');
-        res.json(rows);
+        let query = `
+            SELECT
+                Entrega.id_entrega,
+                Entrega.fecha_entrega,
+                Entrega.calificacion,
+                Entrega.comentario,
+                Tarea.titulo AS nombre_tarea,
+                Users.nombre AS nombre_alumno
+            FROM
+                Entrega
+            INNER JOIN
+                Tarea ON Entrega.id_tarea = Tarea.id_tarea
+            INNER JOIN
+                Users ON Entrega.id_usuario = Users.id_usuario
+        `;
+        let params = [];
+
+        if (id_materia) {
+            // Si se proporciona id_materia, filtrar las entregas por materia
+            query += ` WHERE Tarea.id_materia = ?`;
+            params = [id_materia];
+        }
+
+        const [rows] = await pool.query(query, params);
+
+        if (id_materia) {
+            // Si se buscaron entregas por materia, enviar la respuesta con las entregas
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron entregas para la materia especificada' });
+            }
+            res.json({ materia_id: id_materia, entregas: rows }); // Enviar un objeto con la materia_id y las entregas
+        } else {
+            // Si se buscaron todas las entregas, enviar la respuesta con las entregas
+            res.json(rows);
+        }
+
     } catch (err) {
-        console.error("Error al obtener el listado:",err);
-        res.status(500).json({ message: 'Error interno del Servidor'});
+        console.error("Error al obtener el listado:", err);
+        res.status(500).json({ message: 'Error interno del Servidor' });
     };
-    
 };
 
 //! FUNCION asincrona findone 
