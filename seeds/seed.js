@@ -1,43 +1,55 @@
 import mysql from 'mysql2';
 
-// Configuración de conexión
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root', // Ajusta según tu configuración
-    password: '', // Ajusta según tu configuración
-    database: 'escuela3'
-});
+const runSeed = async () => {
+  //const connection = await pool.getConnection();
 
-// Función para ejecutar el seed
-const runSeed = () => {
-    const checkAdminQuery = `SELECT COUNT(*) AS count FROM users WHERE rol = 'admin'`;
+  try {
+    const [[{ count }]] = await connection.query(
+      `SELECT COUNT(*) AS count FROM Users WHERE rol = 'admin'`
+    );
 
-    connection.query(checkAdminQuery, (err, results) => {
-        if (err) {
-            console.error('Error al verificar administrador:', err);
-            connection.end();
-            return;
-        }
+    if (count === 0) {
+      await connection.beginTransaction();
 
-        if (results[0].count === 0) {
-            const seedData = `
-                INSERT INTO users (username, password, rol) 
-                VALUES ('admin', 'admin123', 'admin')
-            `;
-            connection.query(seedData, (err, result) => {
-                if (err) {
-                    console.error('Error al insertar el administrador:', err);
-                } else {
-                    console.log('Administrador insertado correctamente.');
-                }
-                connection.end();
-            });
-        } else {
-            console.log('El usuario administrador ya existe.');
-            connection.end();
-        }
-    });
+      const users = [
+        ['Claudio Bidau', 'claudiobidau@universidad.com', 'claudio', 'claudio123', 'admin'],
+        ['Lucas Lagos', 'lucas@universidad.com', 'lucas', 'lucas123', 'profesor'],
+        ['Emiliano Spagnolo', 'emiliano@universidad.com', 'emiliano', 'emiliano123', 'profesor'],
+        ['Adrian Burdiles', 'adrian@universidad.com', 'adrian', 'adrian123', 'profesor'],
+        ['Agustin Soto', 'agustin@universidad.com', 'agustin', 'agustin123', 'profesor'],
+      ];
+
+      await connection.query(
+        `INSERT INTO Users (nombre, email, username, password, rol) VALUES ?`,
+        [users]
+      );
+
+      const materias = [
+        ['Algoritmos 1', 'estructuras de control', 2, 1],
+        ['Biologia 3', 'Sistemas del cuerpo humano', 3, 1],
+        ['Matematica 1', 'algebra y geometria', 4, 1],
+        ['Inteligencia Artificial', 'Redes neuronales', 5, 1],
+        ['Matematica 1', 'algebra y geometria', 2, 1],
+        ['Filosofia 1', 'Platon, Democrito y Aristoteles', 4, 1],
+      ];
+
+      await connection.query(
+        `INSERT INTO materia (nom_materia, descripcion, id_profesor, activo) VALUES ?`,
+        [materias]
+      );
+
+      await connection.commit();
+      console.log('Datos insertados correctamente.');
+    } else {
+      console.log('El usuario administrador ya existe.');
+    }
+  } catch (err) {
+    await connection.rollback();
+    console.error('Error al ejecutar el seed:', err);
+  } 
+// finally {
+//     connection.release();
+//   }
 };
 
-// Exportar la función para llamarla desde otros archivos
-module.exports = { runSeed };
+export { runSeed };

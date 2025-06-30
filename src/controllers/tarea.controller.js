@@ -29,22 +29,24 @@ async function getTareaById(req, res) {
 
 //! FUNCION ASINC CREATE con "validacion de profesor autorizado"
 async function createTarea(req, res) {
-    const { titulo, descripcion, fecha_entrega } = req.body;
+    const { titulo, descripcion, id_materia } = req.body;
+    const fecha_entrega = new Date();
 
-    if (!titulo || !descripcion || !fecha_entrega) {
-        return res.status(400).json({ message: 'El nombre de tarea, descripción y fecha de entrega son obligatorios' });
+    if (!titulo || !descripcion || !id_materia) {
+        return res.status(400).json({ message: 'El nombre de tarea, la descripción y el id_materia son obligatorios' });
     }
+
     try {
-        // Validar que el id_profesor existe y corresponde a un profesor
-        const [profesor] = await pool.query('SELECT * FROM Users WHERE id_usuario = ? AND rol = "profesor"', [id_profesor]);
-        if (profesor.length === 0) {
-            return res.status(400).json({ message: 'El id_profesor no es válido o no corresponde a un profesor.' });
+        // Verificar que id_materia exista en la tabla materia
+        const [materias] = await pool.query('SELECT * FROM materia WHERE id_materia = ?', [id_materia]);
+        if (materias.length === 0) {
+            return res.status(400).json({ message: 'El id_materia no es válido.' });
         }
 
-        const [result] = await pool.query('INSERT INTO tarea (titulo, descripcion, fecha_entrega) VALUES (?,?,?)', [titulo, descripcion, fecha_entrega]);
+        const [result] = await pool.query('INSERT INTO tarea (titulo, descripcion, fecha_entrega, id_materia) VALUES (?,?,?,?)', [titulo, descripcion, fecha_entrega, id_materia]);
         res.status(201).json({ id: result.insertId, message: 'Ha generado una tarea nueva exitosamente' });
     } catch (error) {
-        if (error.code === 'ER_DUP_ENTRY') { // Código correcto para duplicados
+        if (error.code === 'ER_DUP_ENTRY') {
             return res.status(409).json({ message: 'Nombre de tarea ya existen. No se pueden duplicar.' });
         }
         console.error('Error al crear tarea: ', error);
