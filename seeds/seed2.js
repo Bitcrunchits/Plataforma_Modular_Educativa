@@ -10,14 +10,14 @@ const runSeed2 = async () => {
         await connection.beginTransaction();
 
         // Crear la base de datos si no existe
-        await connection.query('CREATE DATABASE IF NOT EXISTS escuela7;');
+        //await connection.query('CREATE DATABASE IF NOT EXISTS escuela7;');
 
         // Usar la base de datos recién creada
-        await connection.query('USE escuela7;');
+        await connection.query('USE nombre base de datos creada ;');
 
         // Crear las tablas individualmente
         await connection.query(`
-            CREATE TABLE IF NOT EXISTS Users (
+            CREATE TABLE IF NOT EXISTS users (
                 id_usuario INT PRIMARY KEY AUTO_INCREMENT,
                 nombre VARCHAR(100) NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
@@ -29,49 +29,49 @@ const runSeed2 = async () => {
         `);
 
         await connection.query(`
-            CREATE TABLE IF NOT EXISTS Materia (
+            CREATE TABLE IF NOT EXISTS materia (
                 id_materia INT PRIMARY KEY AUTO_INCREMENT,
                 nom_materia VARCHAR(100) NOT NULL,
                 descripcion TEXT,
                 id_profesor INT NOT NULL,
                 activo BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (id_profesor) REFERENCES Users(id_usuario),
+                FOREIGN KEY (id_profesor) REFERENCES users(id_usuario),
                 UNIQUE (id_profesor, nom_materia)
             );
         `);
 
         await connection.query(`
-            CREATE TABLE IF NOT EXISTS Matricula (
+            CREATE TABLE IF NOT EXISTS matricula (
                 id_matricula INT PRIMARY KEY AUTO_INCREMENT,
                 id_usuario INT NOT NULL,
                 id_materia INT NOT NULL,
-                FOREIGN KEY (id_usuario) REFERENCES Users (id_usuario),
-                FOREIGN KEY (id_materia) REFERENCES Materia(id_materia),
+                FOREIGN KEY (id_usuario) REFERENCES users (id_usuario),
+                FOREIGN KEY (id_materia) REFERENCES materia(id_materia),
                 UNIQUE (id_usuario, id_materia)
             );
         `);
 
         await connection.query(`
-            CREATE TABLE IF NOT EXISTS Tarea (
+            CREATE TABLE IF NOT EXISTS tarea (
                 id_tarea INT PRIMARY KEY AUTO_INCREMENT,
                 titulo VARCHAR(100) NOT NULL,
                 descripcion TEXT,
                 fecha_entrega DATETIME DEFAULT (DATE_ADD(CURDATE(), INTERVAL 15 DAY)) NULL,
                 id_materia INT NOT NULL,
-                FOREIGN KEY (id_materia) REFERENCES Materia(id_materia)
+                FOREIGN KEY (id_materia) REFERENCES materia(id_materia)
             );
         `);
 
         await connection.query(`
-            CREATE TABLE IF NOT EXISTS Entrega (
+            CREATE TABLE IF NOT EXISTS entrega (
                 id_entrega INT PRIMARY KEY AUTO_INCREMENT,
                 fecha_entrega DATETIME NOT NULL,
                 id_tarea INT NOT NULL,
                 id_usuario INT NOT NULL,
                 calificacion DECIMAL(5,2),
                 comentario TEXT,
-                FOREIGN KEY (id_tarea) REFERENCES Tarea(id_tarea),
-                FOREIGN KEY (id_usuario) REFERENCES Users(id_usuario),
+                FOREIGN KEY (id_tarea) REFERENCES tarea(id_tarea),
+                FOREIGN KEY (id_usuario) REFERENCES users(id_usuario),
                 UNIQUE (id_tarea, id_usuario)
             );
         `);
@@ -79,11 +79,11 @@ const runSeed2 = async () => {
 
         // Limpiar tablas existentes (opcional, pero recomendado para desarrollo)
         await connection.query('SET FOREIGN_KEY_CHECKS = 0'); // Deshabilitar la verificación de claves foráneas
-        await connection.query('TRUNCATE TABLE Entrega');
-        await connection.query('TRUNCATE TABLE Tarea');
-        await connection.query('TRUNCATE TABLE Matricula');
-        await connection.query('TRUNCATE TABLE Materia');
-        await connection.query('TRUNCATE TABLE Users');
+        await connection.query('TRUNCATE TABLE entrega');
+        await connection.query('TRUNCATE TABLE tarea');
+        await connection.query('TRUNCATE TABLE matricula');
+        await connection.query('TRUNCATE TABLE materia');
+        await connection.query('TRUNCATE TABLE users');
         await connection.query('SET FOREIGN_KEY_CHECKS = 1'); // Habilitar la verificación de claves foráneas
 
 
@@ -106,10 +106,10 @@ const runSeed2 = async () => {
 
         const userValues = users.map(() => '(?, ?, ?, ?, ?)').join(',');
         const flatUsers = users.flat();
-        await connection.query(`INSERT INTO Users (nombre, email, username, password, rol) VALUES ${userValues}`, flatUsers);
+        await connection.query(`INSERT INTO users (nombre, email, username, password, rol) VALUES ${userValues}`, flatUsers);
 
         // Obtener los IDs de los usuarios insertados
-        const [allUsers] = await connection.query(`SELECT id_usuario, rol FROM Users`);
+        const [allUsers] = await connection.query(`SELECT id_usuario, rol FROM users`);
         const profesores = allUsers.filter(user => user.rol === 'profesor');
 
         const materias = [
@@ -120,10 +120,10 @@ const runSeed2 = async () => {
         ];
         const materiaValues = materias.map(() => '(?, ?, ?, ?)').join(',');
         const flatMaterias = materias.flat();
-        await connection.query(`INSERT INTO Materia (nom_materia, descripcion, id_profesor, activo) VALUES ${materiaValues}`, flatMaterias);
+        await connection.query(`INSERT INTO materia (nom_materia, descripcion, id_profesor, activo) VALUES ${materiaValues}`, flatMaterias);
 
         // Obtener los IDs de las materias insertadas
-        const [allMaterias] = await connection.query(`SELECT id_materia FROM Materia`);
+        const [allMaterias] = await connection.query(`SELECT id_materia FROM materia`);
         const materiaIds = allMaterias.map(materia => materia.id_materia);
          // Obtener los IDs de los alumnos insertados
          const alumnos = allUsers.filter(user => user.rol === 'alumno');
@@ -138,10 +138,10 @@ const runSeed2 = async () => {
          ];
         const matriculaValues = matriculas.map(() => '(?, ?)').join(',');
         const flatMatriculas = matriculas.flat();
-        await connection.query(`INSERT INTO Matricula (id_usuario, id_materia) VALUES ${matriculaValues}`, flatMatriculas);
+        await connection.query(`INSERT INTO matricula (id_usuario, id_materia) VALUES ${matriculaValues}`, flatMatriculas);
 
             // Obtener IDs de tareas
-        const [allTareas] = await connection.query(`SELECT id_tarea, id_materia FROM Tarea`);
+        const [allTareas] = await connection.query(`SELECT id_tarea, id_materia FROM tarea`);
 
             const tareas = [
                 ['Entrega 1: Álgebra', 'Ejercicios de álgebra básica', materiaIds[0]],
@@ -151,10 +151,10 @@ const runSeed2 = async () => {
             ];
     const tareaValues = tareas.map(() => '(?, ?, ?)').join(',');
     const flatTareas = tareas.flat();
-    await connection.query(`INSERT INTO Tarea (titulo, descripcion, id_materia) VALUES ${tareaValues}`, flatTareas);
+    await connection.query(`INSERT INTO tarea (titulo, descripcion, id_materia) VALUES ${tareaValues}`, flatTareas);
 
             // Obtener los IDs de las tareas insertadas
-           const [tareasInsertadas] = await connection.query(`SELECT id_tarea FROM Tarea`);
+           const [tareasInsertadas] = await connection.query(`SELECT id_tarea FROM tarea`);
             const tareaIds = tareasInsertadas.map(tarea => tarea.id_tarea);
                 const now = new Date(); // Fecha actual para fecha_entrega
                 const entregas = [
@@ -166,7 +166,7 @@ const runSeed2 = async () => {
 
              const entregaValues = entregas.map(() => '(?, ?, ?, ?, ?)').join(',');
              const flatEntregas = entregas.flat();
-           await connection.query(`INSERT INTO Entrega (fecha_entrega, id_tarea, id_usuario, calificacion, comentario) VALUES ${entregaValues}`, flatEntregas);
+           await connection.query(`INSERT INTO entrega (fecha_entrega, id_tarea, id_usuario, calificacion, comentario) VALUES ${entregaValues}`, flatEntregas);
 
 
         await connection.commit();

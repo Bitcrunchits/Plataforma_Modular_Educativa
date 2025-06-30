@@ -60,7 +60,9 @@ Para iniciar realiza los siguientes pasos:
 
 ```bash
 1) Crear la base de datos, vacía solo el nombre en XAMPP o medio ambiente elegido.
-2) Crear un archivo .env y agregar el nombre de la DB, Hacer lo mismo en .envs.
+    a)Abrir el archivo SEED2 y en la linea de codigo 16 (await connection.query('USE nombre base de datos creada ;');)
+    colocamos el nombre de la DB vacia que creamos,  ej: await connection.query('USE escuela ;');
+2) Crear un archivo .env y agregar el nombre de la DB junto con las variables de entorno.
 3) iniciar el servidor 
 npm run dev
 -- al iniciar el servidor se ejecutará el archivo SEED2 desde index.js. Este SEED genera el contenido de la DB completa
