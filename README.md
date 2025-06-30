@@ -65,3 +65,4 @@ Para iniciar realiza los siguientes pasos:
 npm run dev
 -- al iniciar el servidor se ejecutará el archivo SEED2 desde index.js. Este SEED genera el contenido de la DB completa
 -- incluyendo el admin con las claves genericas "que deben ser cambiadas al ingresar".
+4) Luego de confirmado y que todo este en orden sin fallos DEBEMOS comentar la ejecución del SEED2 en el archivo index linea de codigo 13. De esta manera evitaremos que los datos de la base de datos se sobre escriban al iniciar el servidor cada vez ya que el SEED2 contiene unos comandos que drenan cuanquier dato de la db antes de inyectar los que tiene programado, evitando conflictos.

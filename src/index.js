@@ -10,7 +10,7 @@ const main = () => {
         console.log('server listening on port', port);
         await testConnection (); //!esta funcion testea la conexion a la DB. IMPORTANTISIMA 
         
-        //runSeed2 ();//inicia el seed 
+        runSeed2 ();//inicia el seed esta linea se debe comentar luego de crear la DB.
         
     });
 }
