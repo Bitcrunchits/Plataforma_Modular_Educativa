@@ -48,6 +48,41 @@ async function getAllEntrega(req, res) {
     };
 };
 
+async function getEntregasByAlumno(req, res) {
+    const { id } = req.params;
+    try {
+        const [rows] = await pool.query(
+            `SELECT 
+                E.id_entrega,
+                E.fecha_entrega,
+                E.calificacion,
+                E.comentario,
+                T.id_tarea,
+                T.titulo,
+                T.descripcion,
+                T.fecha_entrega AS fecha_limite,
+                M.nom_materia
+            FROM 
+                Entrega E
+                JOIN Tarea T ON E.id_tarea = T.id_tarea
+                JOIN Materia M ON T.id_materia = M.id_materia
+            WHERE 
+                E.id_usuario = ?`,
+            [id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron entregas para este alumno.' });
+        }
+
+        res.json({ alumno_id: id, entregas: rows });
+    } catch (err) {
+        console.error('Error al obtener entregas del alumno: ', err);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+}
+
+
 //! FUNCION asincrona findone 
 async function getEntregaById ( req, res) {
     const { id } = req.params //creamos una constante para guardar el dato que buscamos 
@@ -194,7 +229,8 @@ export const entregaController = {
     getAllEntrega,
     getEntregaById,
     entregarTarea,
-    actualizarEntrega
+    actualizarEntrega,
+    getEntregasByAlumno
     
 };
 

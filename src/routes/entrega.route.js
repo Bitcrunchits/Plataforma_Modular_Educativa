@@ -4,16 +4,19 @@ import { Router } from "express";
 const entregaRouter = Router();
 
 //!RUTAS CRUD
-//GET /materia
+//GET /entrega y entregas por materia
 entregaRouter.get('/', entregaController.getAllEntrega);
 
-// GET /materia/:id (obtener mateiras por ID)
+// GET /entrega/:id (obtener entrega por ID)
 entregaRouter.get('/:id', entregaController.getEntregaById);
 
-// POST /materias (crear materias)
+// GET /entrega/:id (obtener entrega por alumno)
+entregaRouter.get('/alumno/:id/entregas', entregaController.getEntregasByAlumno);;
+
+// POST /entregas (crear entrega)
 entregaRouter.post('/', entregaController.entregarTarea);
 
-//UPDATE /materias/:id (actualizar materias)
+//UPDATE /entregas/:id (actualizar entrega)
 entregaRouter.patch('/:id', entregaController.actualizarEntrega);
 
 
