@@ -1,5 +1,5 @@
 import express from 'express';
-import { envs } from './config/envs.js';
+import { envs } from './configuration/envs.js';
 import materiaRouter from './routes/materia.route.js';
 import tareaRouter from './routes/tarea.route.js'; // Importamos el router de tareas
 import matriculaRouter from './routes/matricula.route.js';
