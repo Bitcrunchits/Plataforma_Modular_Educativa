@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import { envs } from '../config/envs.js';
+import { envs } from '../configuration/envs.js';
 // aca haremos la conexion a la db.
 
 
