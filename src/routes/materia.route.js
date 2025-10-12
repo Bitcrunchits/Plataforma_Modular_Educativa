@@ -1,5 +1,7 @@
 import { materiaController } from '../controllers/materia.controller.js'
 import { Router } from "express";
+import { validatorMiddleware } from '../middlewares/validator.middlewares.js';
+import { createMateriaSchema, updateMateriaSchema } from '../module/schema/materia/Materia.schema.js';
 
 const materiaRouter = Router();
 
@@ -11,10 +13,17 @@ materiaRouter.get('/', materiaController.getAllMaterias);
 materiaRouter.get('/:id', materiaController.getMateriasById);
 
 // POST /materias (crear materias)
-materiaRouter.post('/', materiaController.createMateria);
+materiaRouter.post(
+    '/',
+    validatorMiddleware(createMateriaSchema, 'body'),
+    materiaController.createMateria
+);
 
 //UPDATE /materias/:id (actualizar materias)
-materiaRouter.patch('/:id', materiaController.updateMateria);
+materiaRouter.patch(
+    '/:id',
+    validatorMiddleware(updateMateriaSchema), 
+    materiaController.updateMateria);
 
 
 
