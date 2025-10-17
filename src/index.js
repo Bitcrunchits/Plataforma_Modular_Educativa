@@ -9,9 +9,9 @@ import { initializeSocket } from './socket.handler.js'; // Importamos el handler
 async function main() {
     try {
         // 1. CONEXIÓN A LA BASE DE DATOS (TypeORM)
-        console.log('🔗 Conectando a la Base de Datos...');
+        console.log(' Conectando a la Base de Datos...');
         await AppDataSource.initialize();
-        console.log('✅ Conexión a la Base de Datos establecida con éxito.');
+        console.log('Conexión a la Base de Datos establecida con éxito.');
 
         // 2. CREACIÓN DEL SERVIDOR HTTP Y SOCKET.IO
         const server = http.createServer(app);
