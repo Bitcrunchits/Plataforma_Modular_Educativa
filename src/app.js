@@ -1,32 +1,61 @@
 import express from 'express';
-import { envs } from './configuration/envs.js';
-import materiaRouter from './routes/materia.route.js';
-import tareaRouter from './routes/tarea.route.js'; // Importamos el router de tareas
-import matriculaRouter from './routes/matricula.route.js';
-import entregaRouter from './routes/entrega.route.js'; // Importamos el router de entregas
-import userRouter from './routes/user.route.js'; // Importamos el router de usuarios
+import cors from 'cors';
+import passport from 'passport';
 
 
-const port = envs.PORT || 3001; // Definimos el puerto del servidor, si no se define en las variables de entorno, usará el 3000
+import './configuration/passport.js'; 
 
-const app = express(); //creamos la constante app que creará el servidor
-
-app.use(express.json()); // para que manipule los objetos json.
-
-app.use(materiaRouter); // para que use el metodo de enrutamientos desde el archivo..
-app.use(tareaRouter); // para que use el metodo de enrutamientos desde el archivo tareas
-app.use(matriculaRouter); // para que use el metodo de enrutamientos desde el archivo matrículas
-app.use(userRouter); // para que use el metodo de enrutamientos desde el archivo usuarios
-app.use(entregaRouter); // para que use el metodo de enrutamientos desde el archivo tareas
-
-app.use('/api/materia', materiaRouter); // Definimos la ruta base para las materias
-app.use('/api/tarea', tareaRouter); // Definimos la ruta base para las tareas.
-app.use('/api/matricula', matriculaRouter); // Definimos la ruta base para las matrículas
-app.use('/api/users', userRouter); // Definimos la ruta base para los usuarios
-app.use('/api/entrega', entregaRouter); // Definimos la ruta base para las tareas
+// 2. Importación de Rutas
+// import userRouter from './module/user/user.route.js';
+// import materiaRouter from './module/materia/materia.route.js';
+// import tareaRouter from './module/tarea/tarea.route.js';
+// import entregaRouter from './module/entrega/entrega.route.js';
+// import matriculaRouter from './module/matricula/matricula.route.js';
 
 
-app.set('port', envs.PORT);
+// Inicialización de la aplicación Express
+const app = express();
 
 
-export default app; //exportar constante app
+
+// Permite solicitudes CORS desde el frontend
+app.use(cors());
+
+// Permite a Express leer JSON en el cuerpo de las peticiones (DTOs)
+app.use(express.json());
+
+// Inicializa Passport para manejar la autenticación JWT
+app.use(passport.initialize());
+
+
+// --- MONTAJE DE RUTAS ---
+// Conecta las rutas de cada módulo a la aplicación, cumpliendo la arquitectura.
+
+// app.use('/users', userRouter);
+// app.use('/materias', materiaRouter);
+// app.use('/tareas', tareaRouter);
+// app.use('/entregas', entregaRouter);
+// app.use('/matriculas', matriculaRouter);
+
+// Middleware de manejo de errores (El último middleware en ejecutarse)
+// Captura cualquier error que haya sido pasado a 'next(error)' en los controladores o servicios.
+app.use((err, req, res, next) => {
+   
+    const status = err.status || 500;
+    const message = err.message || 'Error interno del servidor';
+
+    console.error(err); // Loguear el error en la consola del servidor (para debugging)
+
+    // Respuesta genérica al cliente
+    res.status(status).json({
+        success: false,
+        message: 'error ' + message,
+        // En producción, no deberíamos exponer el stack trace, pero lo mantenemos
+        // para fines de desarrollo/evaluación.
+        stack: process.env.NODE_ENV === 'production' ? null : err.stack, 
+    });
+});
+
+// Exporta la aplicación para que index.js pueda levantar el servidor
+export default app;
+

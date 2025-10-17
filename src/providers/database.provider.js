@@ -15,6 +15,7 @@ export const AppDataSource = new DataSource({
     host: envs.DB_HOST,
     port: envs.DB_PORT,
     username: envs.DB_USER,
+    database: envs.DATABASE,
     // password: envs.DB_PASSWORD,
     //entitysSchemas
     entities: [
