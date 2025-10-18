@@ -40,7 +40,7 @@ export const RegisterSchema = joi.object({
 
 //* Esquema de validación para el inicio de sesión
 
-export const LogisSchema = joi.object({
+export const LoginSchema = joi.object({
     email: joi.string()
         .trim()
         .email()

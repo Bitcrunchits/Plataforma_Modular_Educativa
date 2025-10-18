@@ -6,7 +6,7 @@ import passport from 'passport';
 import './configuration/passport.js'; 
 
 // 2. Importación de Rutas
-// import userRouter from './module/user/user.route.js';
+import userRouter from './module/user/user.route.js';
 // import materiaRouter from './module/materia/materia.route.js';
 // import tareaRouter from './module/tarea/tarea.route.js';
 // import entregaRouter from './module/entrega/entrega.route.js';
@@ -30,8 +30,10 @@ app.use(passport.initialize());
 
 // --- MONTAJE DE RUTAS ---
 // Conecta las rutas de cada módulo a la aplicación, cumpliendo la arquitectura.
-
-// app.use('/users', userRouter);
+app.get('/test', (req, res) => {
+    res.send('Ruta de prueba de Express funcionando.');
+});
+app.use('/api/user', userRouter);
 // app.use('/materias', materiaRouter);
 // app.use('/tareas', tareaRouter);
 // app.use('/entregas', entregaRouter);

@@ -9,7 +9,7 @@ const envsSchema = joi.object({
     DB_HOST: joi.string().required(),
     DB_USER: joi.string().required(),
     // DB_PASSWORD: joi.string().required(),
-    DATABASE: joi.string().required(),
+    DB_NAME: joi.string().required(),
     DB_TYPE: joi.string().valid('mysql').required(),
     // JWT_SECRET: joi.string().required(),
   })
@@ -27,7 +27,7 @@ export const envs = {
   DB_HOST: envsVar.DB_HOST,
   DB_USER: envsVar.DB_USER,
   // DB_PASSWORD: envsVar.DB_PASSWORD,
-  DATABASE: envsVar.DATABASE,
+  DB_NAME: envsVar.DB_NAME,
   DB_TYPE: envsVar.DB_TYPE,
   JWT_SECRET: envsVar.JWT_SECRET
 };
