@@ -1,40 +1,6 @@
-import { DataSource} from 'typeorm';
+// src/providers/database.provider.js
 
-import UserEntity from '../module/user/User.entity.js';
-import MateriaEntity from'../module/materia/Materia.entity.js';
-import TareaEntity from '../module/tarea/Tarea.entity.js';
-import EntregaEntity from '../module/entrega/Entrega.entity.js';
-import MatriculaEntity from '../module/matricula/Matricula.entity.js';
+import { AppDataSource, initializeDatabase } from '../providers/datasource.providers.js';
 
-import { envs } from '../configuration/envs.js';
-
-//instancia de Typeorm DataSource
-export const AppDataSource = new DataSource({
-    //credenciales de envs
-    type: envs.DB_TYPE,
-    host: envs.DB_HOST,
-    port: envs.DB_PORT,
-    username: envs.DB_USER,
-    database: envs.DATABASE,
-    // password: envs.DB_PASSWORD,
-    //entitysSchemas
-    entities: [
-        UserEntity,
-        MateriaEntity,
-        MatriculaEntity,
-        TareaEntity,
-        EntregaEntity,
-    ],
-    synchronize: envs.NODE_ENV === 'development',
-    logging: envs.NODE_ENV === 'development'
-});
-
-export const connectDB = async () => {
-    try {
-        await AppDataSource.initialize();
-        console.log("Conexión a DB establecida y ORM listo")
-    } catch (error) {
-        console.error(" Error de Conexión a DB:", error);
-        process.exit(1)
-    }
-}
+// Solo reexportamos lo que ya existe, no creamos otro DataSource
+export { AppDataSource, initializeDatabase };

@@ -4,7 +4,7 @@ import { registerUser, loginUser } from './user.service.js';
 
 /**
  * Registra un nuevo usuario.
- * @route POST /api/user/register
+ * @route POST /users/register
  */
 export const register = async (req, res, next) => {
     try {

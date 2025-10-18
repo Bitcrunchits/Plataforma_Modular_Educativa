@@ -1,7 +1,6 @@
 import http from 'http';
 import { Server } from 'socket.io'; 
 import app from './app.js';
-// CORRECCIÓN CLAVE 1: Importar la función de inicialización
 import { initializeDatabase } from './providers/datasource.providers.js'; 
 import { envs } from './configuration/envs.js'; 
 import { initializeSocket } from './socket.handler.js'; 
@@ -9,7 +8,7 @@ import { initializeSocket } from './socket.handler.js';
 // Función principal asíncrona para inicializar la aplicación
 async function main() {
     try {
-        // 1. CONEXIÓN A LA BASE DE DATOS Y SINCRONIZACIÓN
+        
         console.log('Conectando y Sincronizando Base de Datos...');
         // CORRECCIÓN CLAVE 2: Llamar a la función que sincroniza y crea las tablas
         await initializeDatabase(); 
