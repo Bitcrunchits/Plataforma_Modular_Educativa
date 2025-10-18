@@ -2,7 +2,7 @@
 
 
 import { AppDataSource } from "../../providers/database.provider.js";
-import UserEntity from "../entity/user/User.entity.js";
+import UserEntity from "./User.entity.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { envs } from '../../configuration/envs.js';
@@ -12,6 +12,12 @@ import { envs } from '../../configuration/envs.js';
 const userRepository = AppDataSource.getRepository(UserEntity)
 //!-----------------------------------
 
+const getUserRepository = () => {
+    // Si AppDatasource no está inicializado, esto podría fallar, pero
+    // index.js garantiza que se llama a initializeDatabase() antes de levantar Express.
+    // Usamos el nombre 'User' que definiste en el EntitySchema.
+    return AppDataSource.getRepository(UserEntity);
+}
 /**
  * *Genera un JSON Web Token (JWT) para un usuario.
  * @param {Object} user - Objeto de la entidad de usuario.
@@ -42,6 +48,7 @@ const generateToken = (user) => {
 
 export const registerUser = async (userData) => {
     //verifica el si el email existe y tiene email
+    const userRepository = getUserRepository();
     const existingUser = await userRepository.findOneBy({ email: userData.email });
 
     if (existingUser) {
@@ -66,6 +73,7 @@ export const registerUser = async (userData) => {
     await userRepository.save(newUser);
 
     // generar el token
+    const token = generateToken(newUser);
     const { password, ...userResponse } = newUser;
     return { user: userResponse, token };
 };
@@ -79,10 +87,12 @@ export const registerUser = async (userData) => {
  */
 
 export const loginUser = async (email, password) => {
-    //buscar usuario por mail
-    const user = await userRepository.findOneBy({email});
 
-    if(!user) {
+    const userRepository = getUserRepository();
+    //buscar usuario por mail
+    const user = await userRepository.findOneBy({ email });
+
+    if (!user) {
         const error = new Error('Credenciales inválidas: Email no encontrado.');
         error.statusCode = 401; //Unauthorized
         throw error;
@@ -91,9 +101,9 @@ export const loginUser = async (email, password) => {
     //copmparar password encriptada
     const isMatch = await bcrypt.compare(password, user.password);
 
-    if(!isMatch) {
+    if (!isMatch) {
         const error = new Error('Credenciales inválidas: Datos incorrectos.');
-        error.statusCode = 401; 
+        error.statusCode = 401;
         throw error;
     }
 
@@ -102,8 +112,8 @@ export const loginUser = async (email, password) => {
 
     //Retornar el token y la info del user (sin contraseña)
     const { password: _, ...userResponse } = user; //* desestructuracion avanzada de JS  esta dividiendo el objeto en tres partes, el _ es un identificador de descarte de dice a JS "extrae el valor de la propiedad password, pero no lo guardes en ninguna variable que voyu a usar. es decir ignoralo un vez que lo extraigas VER DOCUMENTACION JS"
-                                                    //"Del objeto user, extrae la password (y deséchala _), y pon todo lo demás (...) en un objeto limpio llamado userResponse."
-    return { user: userResponse, token}; 
+    //"Del objeto user, extrae la password (y deséchala _), y pon todo lo demás (...) en un objeto limpio llamado userResponse."
+    return { user: userResponse, token };
 };
 
 /**
@@ -113,6 +123,7 @@ export const loginUser = async (email, password) => {
  */
 
 export const findUserById = async (id) => {
+    const userRepository = getUserRepository();
     const user = await userRepository.findOneBy({ id });
 
     if (!user) {
@@ -120,7 +131,7 @@ export const findUserById = async (id) => {
         error.statusCode = 404; // Not Found
         throw error;
     }
-    
+
     // Excluir la contraseña antes de devolver el objeto
     const { password, ...userResponse } = user;
     return userResponse;

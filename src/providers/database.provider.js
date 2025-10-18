@@ -1,10 +1,10 @@
 import { DataSource} from 'typeorm';
 
-import UserEntity from '../module/entity/user/User.entity.js';
-import MateriaEntity from'../module/entity/materia/Materia.entity.js';
-import TareaEntity from '../module/entity/tarea/Tarea.entity.js';
-import EntregaEntity from '../module/entity/entrega/Entrega.entity.js';
-import MatriculaEntity from '../module/entity/matricula/Matricula.entity.js';
+import UserEntity from '../module/user/User.entity.js';
+import MateriaEntity from'../module/materia/Materia.entity.js';
+import TareaEntity from '../module/tarea/Tarea.entity.js';
+import EntregaEntity from '../module/entrega/Entrega.entity.js';
+import MatriculaEntity from '../module/matricula/Matricula.entity.js';
 
 import { envs } from '../configuration/envs.js';
 
