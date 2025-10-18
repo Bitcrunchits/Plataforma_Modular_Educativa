@@ -29,11 +29,7 @@ app.use(passport.initialize());
 
 
 // --- MONTAJE DE RUTAS ---
-// Conecta las rutas de cada módulo a la aplicación, cumpliendo la arquitectura.
-app.get('/test', (req, res) => {
-    res.send('Ruta de prueba de Express funcionando.');
-});
-app.use('/api/user', userRouter);
+app.use('/users', userRouter);
 // app.use('/materias', materiaRouter);
 // app.use('/tareas', tareaRouter);
 // app.use('/entregas', entregaRouter);

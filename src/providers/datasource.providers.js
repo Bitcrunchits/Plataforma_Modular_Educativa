@@ -30,7 +30,7 @@ export const AppDataSource = new DataSource({
         EntregaEntity,
         MatriculaEntity
     ],
-    synchronize: true,
+    synchronize: true, //(synchronize: envs.NODE_ENV === 'development')
 
     logging: false,
 });

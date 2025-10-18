@@ -1,138 +1,112 @@
-//* Este archivo implementa la lógica de negocio para el registro y el login.
-
-
 import { AppDataSource } from "../../providers/database.provider.js";
-import UserEntity from "./User.entity.js";
+import UserEntity from "./User.entity.js"; // Importación de la EntitySchema
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { envs } from '../../configuration/envs.js';
+import { envs } from "../../configuration/envs.js";
 
-//repositorio de Typeorm para obtener los metodos fr type orm ver "patron de diseño repository"
-//!----------------------------------- interactua con la tabla de usuarios
-const userRepository = AppDataSource.getRepository(UserEntity)
-//!-----------------------------------
 
-const getUserRepository = () => {
-    // Si AppDatasource no está inicializado, esto podría fallar, pero
-    // index.js garantiza que se llama a initializeDatabase() antes de levantar Express.
-    // Usamos el nombre 'User' que definiste en el EntitySchema.
+const getUsuarioRepository = () => {
+
     return AppDataSource.getRepository(UserEntity);
-}
-/**
- * *Genera un JSON Web Token (JWT) para un usuario.
- * @param {Object} user - Objeto de la entidad de usuario.
- * @returns {string} El token JWT generado.
- */
-
-const generateToken = (user) => {
-    //el payload del token contiene info esencial pero NO sensible
-    const payload = {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-    };
-    // Firmar el token con el secreto definido en las variables de entorno
-    return jwt.sign(payload, envs.JWT_SECRET, {
-        expiresIn: '1d',
-    });
 };
 
 
 /**
- * *Registra un nuevo usuario en la base de datos.
- * @param {Object} userData - Datos del usuario (nombre, email, password).
- * @returns {Object} Usuario guardado y el token JWT.
- * @throws {Error} Si el usuario ya existe.
+ * @description Crea un nuevo usuario en la base de datos.
+ * @param {object} userData - Datos de registro (name, email, password).
+ * @returns {Promise<object>} Objeto con el token JWT y los datos del usuario.
  */
-
-
 export const registerUser = async (userData) => {
-    //verifica el si el email existe y tiene email
-    const userRepository = getUserRepository();
-    const existingUser = await userRepository.findOneBy({ email: userData.email });
+    const userRepository = getUsuarioRepository();
 
+    // 1. Verificar si el usuario ya existe
+    const existingUser = await userRepository.findOneBy({ email: userData.email });
     if (existingUser) {
-        const error = new Error('El email ya esta resgistrado.');
-        error.statusCode = 409; //conflic
-        throw error;
+        throw new Error('El correo electrónico ya está registrado.');
     }
 
-    //Encriptaciòn de password inmgresada
+    // 2. Hashear la contraseña
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-    const salt = await bcrypt.genSalt(12);
-    const hasedPassword = await bcrypt.hash(userData.password, salt);
-
-    //Crear el nuevo usuario
+    // 3. Crear el nuevo usuario
     const newUser = userRepository.create({
-        ...userData,
-        password: hasedPassword,
-        role: 'student',
+        name: userData.name,
+        email: userData.email,
+        password: hashedPassword,
+        // El rol por defecto es 'student' según la entidad
     });
 
-    // guardar en la base de datos
+    // 4. Guardar el usuario en la base de datos
     await userRepository.save(newUser);
 
-    // generar el token
-    const token = generateToken(newUser);
-    const { password, ...userResponse } = newUser;
-    return { user: userResponse, token };
+    // 5. Generar JWT (Incluimos ID, email y rol)
+    const token = jwt.sign(
+        { id: newUser.id, email: newUser.email, role: newUser.role },
+        envs.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
+    // Retornar solo los datos seguros (sin el hash de la contraseña)
+    return {
+        token,
+        user: {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+        }
+    };
 };
 
 /**
- * *Autentica un usuario y genera un token JWT.
- * @param {string} email - Email del usuario.
- * @param {string} password - Contraseña sin encriptar.
- * @returns {Object} Usuario y el token JWT.
- * @throws {Error} Si las credenciales son inválidas.
+ * @description Autentica al usuario.
+ * @param {object} credentials - Credenciales (email, password).
+ * @returns {Promise<object>} Objeto con el token JWT y los datos del usuario.
  */
+export const loginUser = async (credentials) => {
+    const userRepository = getUsuarioRepository();
 
-export const loginUser = async (email, password) => {
-
-    const userRepository = getUserRepository();
-    //buscar usuario por mail
-    const user = await userRepository.findOneBy({ email });
-
+    // 1. Buscar usuario por email
+    const user = await userRepository.findOneBy({ email: credentials.email });
     if (!user) {
-        const error = new Error('Credenciales inválidas: Email no encontrado.');
-        error.statusCode = 401; //Unauthorized
-        throw error;
+        throw new Error('Credenciales inválidas.');
     }
 
-    //copmparar password encriptada
-    const isMatch = await bcrypt.compare(password, user.password);
-
+    // 2. Comparar contraseñas
+    const isMatch = await bcrypt.compare(credentials.password, user.password);
     if (!isMatch) {
-        const error = new Error('Credenciales inválidas: Datos incorrectos.');
-        error.statusCode = 401;
-        throw error;
+        throw new Error('Credenciales inválidas.');
     }
 
-    //generar TOKEN
-    const token = generateToken(user);
+    // 3. Generar JWT
+    const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        envs.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
 
-    //Retornar el token y la info del user (sin contraseña)
-    const { password: _, ...userResponse } = user; //* desestructuracion avanzada de JS  esta dividiendo el objeto en tres partes, el _ es un identificador de descarte de dice a JS "extrae el valor de la propiedad password, pero no lo guardes en ninguna variable que voyu a usar. es decir ignoralo un vez que lo extraigas VER DOCUMENTACION JS"
-    //"Del objeto user, extrae la password (y deséchala _), y pon todo lo demás (...) en un objeto limpio llamado userResponse."
-    return { user: userResponse, token };
+    // Retornar datos seguros
+    return {
+        token,
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+    };
 };
 
 /**
- * Busca un usuario por ID. Usado por el middleware de autenticación.
- * @param {number} id - ID del usuario.
- * @returns {Object} La entidad de usuario.
+ * @description Busca un usuario por su ID. Usado por passport.js para autenticación JWT.
+ * @param {number} userId - ID del usuario.
+ * @returns {Promise<object | null>} Objeto de usuario o null.
  */
+export const findUserById = async (userId) => {
+    const userRepository = getUsuarioRepository();
 
-export const findUserById = async (id) => {
-    const userRepository = getUserRepository();
-    const user = await userRepository.findOneBy({ id });
+    const user = await userRepository.findOneBy({ id: userId });
 
-    if (!user) {
-        const error = new Error('Usuario no encontrado.');
-        error.statusCode = 404; // Not Found
-        throw error;
-    }
-
-    // Excluir la contraseña antes de devolver el objeto
-    const { password, ...userResponse } = user;
-    return userResponse;
-};
+    // Retornar el objeto de usuario completo si se encuentra
+    return user;
+}
