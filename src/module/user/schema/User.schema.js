@@ -1,31 +1,41 @@
-import joi, { valid } from 'joi';
+import joi from 'joi';
 
-const USER_ROLES = ['estudent', 'teacher'];
-
-//* esquema para la creación de un nuevo ususario (registro)
-//*DTO entrada
-export const createUserSchema = joi.object({
-
-    email: joi.string().email().required()
+/**
+ * @description Esquema de validación para la creación de un nuevo usuario.
+ * Se utiliza para la ruta POST /users/register.
+ */
+export const registerSchema = joi.object({
+    nombre: joi.string()
+        .min(3)
+        .max(255)
+        .required()
         .messages({
-            'string.email': 'El email debe ser válido',
-            'any.required': 'El email es obligatorio'
+            'string.empty': 'El nombre es obligatorio.',
+            'string.min': 'El nombre debe tener al menos 3 caracteres.',
         }),
 
-    password: joi.string().min(8).required()
+    email: joi.string()
+        .email({ tlds: { allow: false } }) // Permite cualquier dominio, pero exige formato de email
+        .required()
         .messages({
-            'string.min': 'La contraseña debe tener al menos 8 caracteres',
-            'any.requiered': 'La contraseña es obligatoria'
+            'string.empty': 'El email es obligatorio.',
+            'string.email': 'El email no tiene un formato válido.',
         }),
 
-    role: joi.string().valid(...USER_ROLES).default('student').optional(),
+    username: joi.string()
+        .min(3)
+        .max(50)
+        .required()
+        .messages({
+            'string.empty': 'El username es obligatorio.',
+            'string.min': 'El username debe tener al menos 3 caracteres.',
+        }),
 
+    password: joi.string()
+        .min(8)
+        .required()
+        .messages({
+            'string.empty': 'La contraseña es obligatoria.',
+            'string.min': 'La contraseña debe tener al menos 8 caracteres.',
+        }),
 });
-
-//* Esquema para actualización parcial de usuario (PATCH)
-
-export const updateUserSchema = joi.object({
-    email: joi.string().email().optional(), //no es requerido para patch
-    password: joi.string().min(8).optional(),
-    role: joi.string().valid(...USER_ROLES).optional(),
-})

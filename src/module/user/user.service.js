@@ -1,10 +1,8 @@
 import { AppDataSource } from "../../providers/database.provider.js";
-import UserEntity from "./User.entity.js"; // Importación de la EntitySchema
+import UserEntity from "./user.entity.js"; 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { envs } from "../../configuration/envs.js";
-
-
 
 
 const getUsuarioRepository = () => {
@@ -15,35 +13,46 @@ const getUsuarioRepository = () => {
 
 /**
  * @description Crea un nuevo usuario en la base de datos.
- * @param {object} userData - Datos de registro (name, email, password).
+ * @param {object} userData - Datos de registro (nombre, email, username, password).
  * @returns {Promise<object>} Objeto con el token JWT y los datos del usuario.
  */
 export const registerUser = async (userData) => {
     const userRepository = getUsuarioRepository();
 
-    // 1. Verificar si el usuario ya existe
-    const existingUser = await userRepository.findOneBy({ email: userData.email });
-    if (existingUser) {
+    // 1. Verificar si el correo o el username ya existen
+    const existingUserByEmail = await userRepository.findOneBy({ email: userData.email });
+    if (existingUserByEmail) {
         throw new Error('El correo electrónico ya está registrado.');
+    }
+
+    const existingUserByUsername = await userRepository.findOneBy({ username: userData.username });
+    if (existingUserByUsername) {
+
+        throw new Error('El nombre de usuario ya está en uso.');
     }
 
     // 2. Hashear la contraseña
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-    // 3. Crear el nuevo usuario
+    // 3. Crear el nuevo usuario (TypeORM asigna el rol 'alumno' por defecto según la entidad)
     const newUser = userRepository.create({
-        name: userData.name,
+        nombre: userData.nombre,
+        username: userData.username,
         email: userData.email,
         password: hashedPassword,
-        // El rol por defecto es 'student' según la entidad
+        // rol y activo son asignados por defecto en la entidad
     });
 
     // 4. Guardar el usuario en la base de datos
     await userRepository.save(newUser);
 
-    // 5. Generar JWT (Incluimos ID, email y rol)
+    // 5. Generar JWT (Usamos id_usuario y rol)
     const token = jwt.sign(
-        { id: newUser.id, email: newUser.email, role: newUser.role },
+        {
+            id: newUser.id_usuario, // CAMBIO: Usamos id_usuario
+            email: newUser.email,
+            rol: newUser.rol // CAMBIO: Usamos 'rol' 
+        },
         envs.JWT_SECRET,
         { expiresIn: '1h' }
     );
@@ -52,10 +61,12 @@ export const registerUser = async (userData) => {
     return {
         token,
         user: {
-            id: newUser.id,
-            name: newUser.name,
+            id_usuario: newUser.id_usuario,
+            nombre: newUser.nombre,
+            username: newUser.username,
             email: newUser.email,
-            role: newUser.role,
+            rol: newUser.rol,
+            activo: newUser.activo,
         }
     };
 };
@@ -71,30 +82,36 @@ export const loginUser = async (credentials) => {
     // 1. Buscar usuario por email
     const user = await userRepository.findOneBy({ email: credentials.email });
     if (!user) {
-        throw new Error('Credenciales inválidas.');
+        throw new Error('Credenciales inválidas.'); // Mensaje genérico
     }
 
     // 2. Comparar contraseñas
     const isMatch = await bcrypt.compare(credentials.password, user.password);
     if (!isMatch) {
-        throw new Error('Credenciales inválidas.');
+        throw new Error('Credenciales inválidas.'); // Mensaje genérico
     }
 
     // 3. Generar JWT
     const token = jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
+        {
+            id: user.id_usuario,
+            email: user.email,
+            rol: user.rol
+        },
         envs.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '1d' }
     );
 
     // Retornar datos seguros
     return {
         token,
         user: {
-            id: user.id,
-            name: user.name,
+            id_usuario: user.id_usuario,
+            nombre: user.nombre,
+            username: user.username,
             email: user.email,
-            role: user.role,
+            rol: user.rol,
+            activo: user.activo,
         }
     };
 };
@@ -107,8 +124,8 @@ export const loginUser = async (credentials) => {
 export const findUserById = async (userId) => {
     const userRepository = getUsuarioRepository();
 
-    const user = await userRepository.findOneBy({ id: userId });
 
-    // Retornar el objeto de usuario completo si se encuentra
+    const user = await userRepository.findOneBy({ id_usuario: userId });
+
     return user;
 }

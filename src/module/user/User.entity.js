@@ -1,7 +1,7 @@
 import { EntitySchema } from 'typeorm';
 
-// Definición de roles (Para usar en el campo 'role' de la entidad)
-const USER_ROLES = ['student', 'teacher', 'admin'];
+// Definición de roles (Para usar en el campo 'rol' de la entidad)
+const USER_ROLES = ['alumno', 'profesor', 'admin'];
 
 /**
  * Entidad de Usuario (UserEntity).
@@ -11,13 +11,14 @@ const UserEntity = new EntitySchema({
   name: 'User', 
   tableName: 'users',
   columns: {
-    // ID: Automático e Incremental
-    id: {
+    // ID: Cambiamos a id_usuario para coincidir con la documentación
+    id_usuario: { 
       primary: true,
       type: 'int',
       generated: 'increment',
+      name: 'id_usuario', // Nombre explícito de la columna en MySQL
     },
-    name: { // COLUMNA DE NOMBRE (Alineado con el DTO)
+    nombre: { // Corregido a 'nombre' (alineado con DTO y doc.)
       type: 'varchar',
       nullable: false,
     },
@@ -26,24 +27,44 @@ const UserEntity = new EntitySchema({
       unique: true,
       nullable: false, 
     },
+    username: { // COLUMNA AGREGADA
+      type: 'varchar',
+      unique: true,
+      nullable: false,
+    },
     password: { 
       type: 'varchar',
       nullable: false,
     },
-    // Rol: Usando ENUM para restringir a los valores definidos
-    role: {
+    // Rol: Usando ENUM y nombre 'rol'
+    rol: {
       type: 'enum',
       enum: USER_ROLES,
-      default: 'student',
+      default: 'alumno', // Usamos 'alumno' como default
     },
+    activo: { // COLUMNA AGREGADA
+        type: 'boolean',
+        default: true, // Por defecto, el usuario está activo
+    }
   },
   relations: {
-    // La relación debe ser definida en el archivo de entidad correspondiente
-    matriculas: {
+    // Relaciones One-to-Many
+    materias: { // Las materias que este usuario enseña
+        target: 'Materia',
+        type: 'one-to-many',
+        inverseSide: 'profesor',
+    },
+    matriculas: { // Las matrículas que tiene este usuario (si es alumno)
       target: 'Matricula',
       type: 'one-to-many',
-      inverseSide: 'user',
+      inverseSide: 'usuario',
       nullable: true,
+    },
+    entregas: { // Las entregas de tareas que tiene este usuario (si es alumno)
+        target: 'Entrega',
+        type: 'one-to-many',
+        inverseSide: 'usuario',
+        nullable: true,
     },
   },
 });
