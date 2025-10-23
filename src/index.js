@@ -1,7 +1,7 @@
 import http from 'http';
 import { Server } from 'socket.io'; 
 import app from './app.js';
-import { initializeDatabase } from './providers/datasource.providers.js'; 
+import { initializeDatabase } from './providers/database.provider.js'; 
 import { envs } from './configuration/envs.js'; 
 import { initializeSocket } from './socket.handler.js'; 
 

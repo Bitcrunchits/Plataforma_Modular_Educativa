@@ -1,5 +1,5 @@
 import { AppDataSource } from "../../providers/database.provider.js";
-import UserEntity from "./user.entity.js"; 
+import UserEntity from "./User.entity.js"; 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { envs } from "../../configuration/envs.js";
