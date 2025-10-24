@@ -17,12 +17,19 @@ async function main() {
         const server = http.createServer(app);
 
         // Inicializar Socket.IO
-        const io = new Server(server, {
-            cors: {
-                origin: envs.CLIENT_URL, 
-                methods: ['GET', 'POST'],
-            },
-        });
+        // const io = new Server(server, {
+        //     cors: {
+        //         origin: envs.CLIENT_URL, 
+        //         methods: ['GET', 'POST'],
+        //     },
+        // });
+            const io = new Server(server, {
+                cors: {
+                    origin: ['http://localhost:3000', 'http://127.0.0.1:5500'], // ← agregá este
+                    methods: ['GET', 'POST'],
+                },
+            });
+
 
         // 3. INICIALIZAR LÓGICA DE SOCKETS
         initializeSocket(io);
