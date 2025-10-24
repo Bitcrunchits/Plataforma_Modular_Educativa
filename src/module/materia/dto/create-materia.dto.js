@@ -20,7 +20,6 @@ export const CreateMateriaSchema = joi.object({
             'any.required': 'El ID del profesor es obligatorio.'
         }),
 
-    
     activo: joi.boolean().optional().default(true)
         .messages({
             'boolean.base': 'El campo activo debe ser un booleano (true/false).'
@@ -35,12 +34,11 @@ export const CreateMateriaSchema = joi.object({
 
 //*Esquema para patch de materia
 export const UpdateMateriaSchema = joi.object({
-    
     nom_materia: joi.string().min(3).max(100).optional()
         .messages({
             'string.min': 'El nombre debe tener al menos 3 caracteres',
         }),
     descripcion: joi.string().max(5000).allow('').optional(),
-    activo: joi.boolean().optional(), 
-    id_profesor: joi.number().integer().optional() 
+    activo: joi.boolean().optional(), // Incluimos activo en la actualización
+    id_profesor: joi.number().integer().optional() // Permitimos actualizar el profesor si es necesario
 });

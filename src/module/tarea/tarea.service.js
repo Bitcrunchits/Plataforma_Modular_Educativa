@@ -15,12 +15,16 @@ const getTareaRepository = () => {
 export const createTarea = async (tareaData) => {
     const tareaRepository = getTareaRepository();
 
-    // 1. Opcional: Verificar que la Materia exista (aunque TypeORM lo haría al guardar, es buena práctica)
+    // 1. Verificar que la Materia exista.
     const materiaRepository = AppDataSource.getRepository(MateriaEntity);
-    const materiaExists = await materiaRepository.findOneBy({ id_materia: tareaData.id_materia });
+    
+    
+    const idMateriaNumber = Number(tareaData.id_materia);
+
+    const materiaExists = await materiaRepository.findOneBy({ id_materia: idMateriaNumber });
 
     if (!materiaExists) {
-        // Usamos Error en lugar de una excepción HTTP, el middleware se encargará de gestionarlo.
+    
         const error = new Error(`Materia con ID ${tareaData.id_materia} no encontrada.`);
         error.status = 404;
         throw error;
@@ -44,7 +48,7 @@ export const createTarea = async (tareaData) => {
 export const getTareasByUserId = async (userId) => {
     const tareaRepository = getTareaRepository();
 
-    // Utilizamos QueryBuilder para manejar la complejidad de los JOINs
+    
     const tareas = await tareaRepository.createQueryBuilder("tarea")
         // INNER JOIN Tarea -> Materia
         .innerJoin(MateriaEntity, "materia", "tarea.id_materia = materia.id_materia")

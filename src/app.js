@@ -11,7 +11,7 @@ import userRouter from './module/user/user.route.js';
 import tareaRouter from './module/tarea/tarea.route.js'; 
 // import entregaRouter from './module/entrega/entrega.route.js'; 
 // import matriculaRouter from './module/matricula/matricula.route.js';
-// import materiaRouter from './module/materia/materia.route.js';
+import materiaRouter from './module/materia/materia.route.js';
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.use('/api/users', userRouter);
 app.use('/api/tareas', tareaRouter); 
 // app.use('/api/entregas', entregaRouter);
 // app.use('/api/matriculas', matriculaRouter);
-// app.use('/api/materias', materiaRouter); 
+app.use('/api/materias', materiaRouter); 
 
 
 app.use((err, req, res, next) => {

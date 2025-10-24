@@ -35,13 +35,13 @@ export const registerUser = async (userData) => {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
     // 3. Crear el nuevo usuario (TypeORM asigna el rol 'alumno' por defecto según la entidad)
-    const newUser = userRepository.create({
-        nombre: userData.nombre,
-        username: userData.username,
-        email: userData.email,
-        password: hashedPassword,
-        // rol y activo son asignados por defecto en la entidad
-    });
+   const newUser = userRepository.create({
+    nombre: userData.nombre,
+    username: userData.username,
+    email: userData.email,
+    password: hashedPassword,
+    rol: userData.rol || 'alumno', 
+});
 
     // 4. Guardar el usuario en la base de datos
     await userRepository.save(newUser);
