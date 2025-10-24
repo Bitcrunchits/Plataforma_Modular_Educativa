@@ -10,7 +10,7 @@ async function main() {
     try {
         
         console.log('Conectando y Sincronizando Base de Datos...');
-        // CORRECCIÓN CLAVE 2: Llamar a la función que sincroniza y crea las tablas
+        
         await initializeDatabase(); 
 
         // 2. CREACIÓN DEL SERVIDOR HTTP Y SOCKET.IO
@@ -42,4 +42,4 @@ async function main() {
     }
 }
 
-main(); // Ejecutar la función de inicialización
+main(); 

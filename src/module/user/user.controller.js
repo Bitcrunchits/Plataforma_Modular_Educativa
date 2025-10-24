@@ -1,4 +1,4 @@
-// src/module/user/user.controller.js
+
 
 import { registerUser, loginUser } from './user.service.js';
 
@@ -8,10 +8,10 @@ import { registerUser, loginUser } from './user.service.js';
  */
 export const register = async (req, res, next) => {
     try {
-        // La validación de req.body ya se hizo con validatorMiddleware
+        
         const { user, token } = await registerUser(req.body);
 
-        // 201 Created
+        
         res.status(201).json({
             success: true,
             message: 'Registro exitoso.',
@@ -31,7 +31,7 @@ export const register = async (req, res, next) => {
  */
 export const login = async (req, res, next) => {
     try {
-        // La validación de req.body ya se hizo con validatorMiddleware
+        
         const { email, password } = req.body;
         const { user, token } = await loginUser(email, password);
 
@@ -56,8 +56,7 @@ export const login = async (req, res, next) => {
  */
 export const getProfile = (req, res, next) => {
     try {
-        // req.user ya contiene la información limpia del usuario (sin contraseña)
-        // gracias a la función findUserById usada en el middleware de Passport.
+        
         res.status(200).json({
             success: true,
             message: 'Perfil de usuario obtenido con éxito.',
