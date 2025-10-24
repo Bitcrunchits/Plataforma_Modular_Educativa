@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import passport from 'passport'; // Importamos el objeto passport
+import passport from 'passport'; 
 
-import './configuration/passport.js'; // Solo importamos el archivo para que se ejecute la configuración.
+import './configuration/passport.js'; 
 import { envs } from './configuration/envs.js';
 
 // --- Importación de Routers ---
@@ -24,16 +24,16 @@ app.use(cors({ origin: envs.CLIENT_URL || '*' })); // CORS básico
 app.use(passport.initialize()); // <-- Usamos el objeto passport importado
 
 // --- MONTAJE DE RUTAS ---
-app.get('/', (req, res) => { res.send('API funcionando. Consulte la documentación en /docs.'); }); 
+app.get('/', (req, res) => { res.send('API funcionando.'); }); 
 
-// Montaje de rutas con prefijo /api
+
 app.use('/api/users', userRouter); 
 app.use('/api/tareas', tareaRouter); 
 // app.use('/api/entregas', entregaRouter);
 // app.use('/api/matriculas', matriculaRouter);
 // app.use('/api/materias', materiaRouter); 
 
-// --- MANEJO DE ERRORES (debe ser el último middleware) ---
+
 app.use((err, req, res, next) => {
     console.error(' Error no controlado:', err.stack);
     const status = err.status || 500;

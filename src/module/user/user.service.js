@@ -49,9 +49,9 @@ export const registerUser = async (userData) => {
     // 5. Generar JWT (Usamos id_usuario y rol)
     const token = jwt.sign(
         {
-            id: newUser.id_usuario, // CAMBIO: Usamos id_usuario
+            id: newUser.id_usuario, 
             email: newUser.email,
-            rol: newUser.rol // CAMBIO: Usamos 'rol' 
+            rol: newUser.rol 
         },
         envs.JWT_SECRET,
         { expiresIn: '1h' }
@@ -82,13 +82,13 @@ export const loginUser = async (credentials) => {
     // 1. Buscar usuario por email
     const user = await userRepository.findOneBy({ email: credentials.email });
     if (!user) {
-        throw new Error('Credenciales inválidas.'); // Mensaje genérico
+        throw new Error('Credenciales inválidas.'); 
     }
 
     // 2. Comparar contraseñas
     const isMatch = await bcrypt.compare(credentials.password, user.password);
     if (!isMatch) {
-        throw new Error('Credenciales inválidas.'); // Mensaje genérico
+        throw new Error('Credenciales inválidas.'); 
     }
 
     // 3. Generar JWT
