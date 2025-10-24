@@ -23,13 +23,6 @@ export const RegisterSchema = joi.object({
         'any.required': 'El email es obligatorio.'
     }),
 
-    username: joi.string().min(3).max(50).required().messages({
-        'string.base': 'El username debe ser texto.',
-        'string.empty': 'El username no puede estar vacío.',
-        'string.min': 'El username debe tener al menos 3 caracteres.',
-        'any.required': 'El username es obligatorio.'
-    }),
-
     password: joi.string().min(8).required().messages({
         'string.base': 'La contraseña debe ser texto.',
         'string.empty': 'La contraseña no puede estar vacía.',

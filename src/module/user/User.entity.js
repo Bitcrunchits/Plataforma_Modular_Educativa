@@ -27,10 +27,10 @@ const UserEntity = new EntitySchema({
       unique: true,
       nullable: false, 
     },
-    username: { // COLUMNA AGREGADA
+    username: { 
       type: 'varchar',
       unique: true,
-      nullable: false,
+      nullable: true,
     },
     password: { 
       type: 'varchar',
