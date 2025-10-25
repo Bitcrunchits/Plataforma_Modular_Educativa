@@ -20,7 +20,7 @@ const getMatriculaRepository = () => AppDataSource.getRepository(MatriculaEntity
  */
 export const createMatricula = async (matriculaData) => {
     const { id_usuario, id_materia } = matriculaData;
-    
+
     const matriculaRepository = getMatriculaRepository();
     const userRepository = AppDataSource.getRepository(UserEntity);
     const materiaRepository = AppDataSource.getRepository(MateriaEntity);
@@ -41,19 +41,12 @@ export const createMatricula = async (matriculaData) => {
         throw error;
     }
 
-   
+
     // 3. Verificar unicidad de la matrícula
-    // Buscamos usando los NOMBRES DE LA RELACIÓN definidos en Matricula.entity.js: 'estudiante' y 'materia'.
-    const matriculaExistente = await matriculaRepository.findOne({
-        where: {
-            estudiante: { id_usuario }, // Usamos el nombre de la relación 'estudiante'
-            materia: { id_materia },     // Usamos el nombre de la relación 'materia'
-        },
-        // Mantenemos las relaciones aquí solo para asegurar que la búsqueda sea precisa.
-        relations: {
-            estudiante: true,
-            materia: true
-        }
+    // BUSCAMOS DIRECTAMENTE POR LAS CLAVES FORÁNEAS (id_usuario, id_materia)
+    const matriculaExistente = await matriculaRepository.findOneBy({
+        id_usuario: id_usuario, // Asumiendo que esta columna FK existe
+        id_materia: id_materia, // Asumiendo que esta columna FK existe
     });
 
     if (matriculaExistente) {
@@ -62,13 +55,83 @@ export const createMatricula = async (matriculaData) => {
         throw error;
     }
 
-    // 4. Crear y guardar la matrícula (¡Optimizado!)
-    // Al asignar los objetos 'alumno' y 'materia', TypeORM usa las FK y CARGA las relaciones en el resultado.
+    // 4. Crear y guardar la matrícula
     const nuevaMatricula = matriculaRepository.create({
-        estudiante: alumno, // Relación 'estudiante' (objeto User)
-        materia: materia, // Relación 'materia' (objeto Materia)
+        // Si tu entidad Matricula usa 'estudiante' y 'materia' como nombres de relación,
+        // pasamos los objetos completos.
+        estudiante: alumno,
+        materia: materia,
+
+        // También incluimos los IDs de forma redundante (opcional, pero ayuda a TypeORM)
+        id_usuario: id_usuario,
+        id_materia: id_materia,
     });
 
     // El resultado de save() ya contendrá los objetos 'estudiante' y 'materia' cargados.
     return await matriculaRepository.save(nuevaMatricula);
+};
+
+/**
+ * Obtiene todas las matrículas (alumnos) para una materia específica.
+ * @param {number} idMateria - ID de la materia.
+ * @returns {Promise<MatriculaEntity[]>} Lista de matrículas con el alumno cargado.
+ */
+export const getMatriculasByMateriaId = async (idMateria) => {
+    const matriculaRepository = getMatriculaRepository();
+
+    // Verificamos primero si la materia existe (opcional, pero buena práctica)
+    const materiaRepository = AppDataSource.getRepository(MateriaEntity);
+    const materia = await materiaRepository.findOneBy({ id_materia: idMateria });
+
+    if (!materia) {
+        const error = new Error(`Materia con ID ${idMateria} no encontrada.`);
+        error.status = 404;
+        throw error;
+    }
+
+    // Usamos find para obtener todas las matrículas y cargamos la relación 'estudiante'
+    const matriculas = await matriculaRepository.find({
+        where: { id_materia: idMateria },
+        relations: ['estudiante', 'materia'], // Cargamos el objeto alumno y materia
+        select: {
+            id_matricula: true,
+            fecha_matricula: true,
+
+            estudiante: {
+                id_usuario: true,
+                nombre: true,
+                username: true,
+                email: true,
+                rol: true
+            }
+        }
+    });
+
+    return matriculas;
+};
+
+/**
+ * Obtiene todas las matrículas (materias) para un usuario específico (alumno).
+ * @param {number} idUsuario - ID del usuario/alumno.
+ * @returns {Promise<MatriculaEntity[]>} Lista de matrículas con la materia cargada.
+ */
+export const getMatriculasByUserId = async (idUsuario) => {
+    const matriculaRepository = getMatriculaRepository();
+
+    const matriculas = await matriculaRepository.find({
+        where: { id_usuario: idUsuario },
+        relations: ['materia'], // Cargamos el objeto materia
+        select: {
+            id_matricula: true,
+            fecha_matricula: true,
+
+            materia: {
+                id_materia: true,
+                nom_materia: true,
+                descripcion: true
+            }
+        }
+    });
+
+    return matriculas;
 };

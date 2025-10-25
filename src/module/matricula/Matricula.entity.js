@@ -5,7 +5,7 @@ const MatriculaEntity = new EntitySchema({
   tableName: 'matriculas',
   columns: {
     // ID: Automático e Incremental
-    id: {
+    id_matricula: {
       name: 'id_matricula',
       primary: true,
       type: 'int',

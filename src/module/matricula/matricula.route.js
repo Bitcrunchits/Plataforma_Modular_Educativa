@@ -1,30 +1,46 @@
 import { Router } from 'express';
-import passport from 'passport'; // Para autenticación
-import { createMatriculaController } from './matricula.controller.js';
-import { checkRole } from '../../middlewares/auth.middleware.js'; //  middleware para checkear roles
+import { 
+    createMatriculaController, 
+    getMatriculasByUserIdController, 
+    getMatriculasByMateriaController 
+} from './matricula.controller.js'; 
+import { authMiddleware, checkRole } from '../../middlewares/auth.middleware.js'; // <-- Importación corregida y unificada
 
-/**
- * @fileoverview Rutas para la gestión de matrículas.
- * Utiliza el prefijo '/api/matriculas' definido en App.js.
- */
 
-const router = Router();
+const matriculaRouter = Router();
 
-// Middleware de autenticación global para estas rutas
-const authenticate = passport.authenticate('jwt', { session: false });
+// =========================================================================
+// !RUTAS PRIVADAS (Requieren Autenticación JWT)
+// =========================================================================
 
-/**
- * RUTA: POST /api/matriculas
- * Descripción: Crea una nueva matrícula de un alumno a una materia.
- * Acceso: Solo para 'profesor' o 'admin'.
- * Body: { id_usuario: number, id_materia: number }
- */
-router.post(
+// POST /api/matriculas
+// Uso: Registrar un alumno a una materia. (Acceso: Solo Profesor/Admin)
+// Body: { id_usuario: number, id_materia: number }
+matriculaRouter.post(
     '/',
-    authenticate, // 1. Autenticar al usuario (obtiene req.user)
-    checkRole(['profesor', 'admin']), // 2. Verificar que el usuario tenga rol autorizado
-    createMatriculaController // 3. Ejecutar la lógica de creación
+    authMiddleware, // 1. Autenticar (usa req.user)
+    checkRole(['profesor', 'admin']), // 2. Verificar rol (usa req.user.rol)
+    createMatriculaController
+);
+
+// GET /api/matriculas/mine
+// USO: Obtener las matrículas (materias) del usuario autenticado (el alumno).
+//*La ruta /mine es la más eficiente porque se autocarga con la identidad del usuario a través del token JWT.
+matriculaRouter.get(
+    '/mine',
+    authMiddleware, // <-- ¡Middleware de AUTENTICACIÓN aplicado!
+    getMatriculasByUserIdController
+);
+
+// GET /api/matriculas/by-materia/:id_materia
+// USO: Obtener TODOS los alumnos matriculados en una materia específica.
+// Acceso: Solo Profesor o Admin (con validación posterior de que sea SU materia).
+matriculaRouter.get(
+    '/by-materia/:id_materia',
+    authMiddleware,
+    checkRole(['profesor', 'admin']), // Solo profesores o admins pueden pedir listas de alumnos
+    getMatriculasByMateriaController
 );
 
 
-export default router;
+export default matriculaRouter;
