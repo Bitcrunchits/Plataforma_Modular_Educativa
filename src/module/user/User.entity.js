@@ -54,7 +54,7 @@ const UserEntity = new EntitySchema({
     matriculas: { 
       target: 'Matricula',
       type: 'one-to-many',
-      inverseSide: 'usuario',
+      inverseSide: 'id_usuario',
       nullable: true,
     },
     entregas: { 
