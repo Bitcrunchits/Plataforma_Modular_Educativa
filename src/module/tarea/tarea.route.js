@@ -28,6 +28,6 @@ tareaRouter.get('/',
     getTareas
 );
 
-// [PENDIENTE] PATCH /api/tareas/:id - Actualizar tarea (Lo implementaremos luego)
+
 
 export default tareaRouter;

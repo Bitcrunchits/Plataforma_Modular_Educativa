@@ -8,10 +8,10 @@ import { registerUser, loginUser } from './user.service.js';
  */
 export const register = async (req, res, next) => {
     try {
-        
+
         const { user, token } = await registerUser(req.body);
 
-        
+
         res.status(201).json({
             success: true,
             message: 'Registro exitoso.',
@@ -31,18 +31,16 @@ export const register = async (req, res, next) => {
  */
 export const login = async (req, res, next) => {
     try {
-        
         const { email, password } = req.body;
-        const { user, token } = await loginUser(email, password);
+        const { user, token } = await loginUser({ email, password });
 
-        // 200 OK
         res.status(200).json({
             success: true,
             message: 'Inicio de sesión exitoso.',
             data: user,
             token,
         });
-        
+
     } catch (error) {
         // Pasa el error (ej. credenciales inválidas) al middleware de errores
         next(error);
@@ -56,7 +54,7 @@ export const login = async (req, res, next) => {
  */
 export const getProfile = (req, res, next) => {
     try {
-        
+
         res.status(200).json({
             success: true,
             message: 'Perfil de usuario obtenido con éxito.',

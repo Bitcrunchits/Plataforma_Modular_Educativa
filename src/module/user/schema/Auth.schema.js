@@ -1,10 +1,8 @@
 import joi from 'joi';
 
-
-
 /**
  * @description Esquema de validación para el registro de nuevos usuarios (POST /users/register).
- * Incluye nombre, email, username y password.
+ * Incluye nombre, email, username, password y rol (opcional).
  */
 export const RegisterSchema = joi.object({
     
@@ -23,12 +21,28 @@ export const RegisterSchema = joi.object({
         'any.required': 'El email es obligatorio.'
     }),
 
+    username: joi.string().min(3).max(50).required().messages({
+        'string.base': 'El username debe ser texto.',
+        'string.empty': 'El username no puede estar vacío.',
+        'string.min': 'El username debe tener al menos 3 caracteres.',
+        'string.max': 'El username no puede exceder los 50 caracteres.',
+        'any.required': 'El username es obligatorio.'
+    }),
+
     password: joi.string().min(8).required().messages({
         'string.base': 'La contraseña debe ser texto.',
         'string.empty': 'La contraseña no puede estar vacía.',
         'string.min': 'La contraseña debe tener al menos 8 caracteres.',
         'any.required': 'La contraseña es obligatoria.'
     }),
+    
+    rol: joi.string()
+        .valid('alumno', 'profesor', 'admin') // ¡Permitimos 'profesor' aquí!
+        .default('alumno')
+        .optional()
+        .messages({
+            'any.only': 'El rol debe ser uno de: alumno, profesor, o admin.',
+        }),
 });
 
 /**
