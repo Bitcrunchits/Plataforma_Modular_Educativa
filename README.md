@@ -101,59 +101,20 @@ JWT_SECRET=super-secreto-y-largo-de-mas-de-256-bits
 node src/index.js
 La inicialización realizará la conexión a la base de datos y sincronizará las entidades (creando las tablas si no existen).
 
-🌐 Endpoints Implementados (5 Entidades)
+### 🌐 Endpoints Principales
 
-A continuación se documentan los endpoints principales de las entidades del sistema, indicando ruta, método, descripción y rol requerido.
+| **Módulo** | **Método** | **Ruta** | **Descripción** | **Rol Requerido** | **Estado** |
+|-------------|-------------|-----------|------------------|-------------------|-------------|
+| 🧑‍🎓 **User** | `POST` | `/api/users/register` | Registro de un nuevo usuario (Alumno, Profesor o Admin). | Público | ✅ 201 |
+| 🧑‍🎓 **User** | `POST` | `/api/users/login` | Autenticación y obtención de un token JWT. | Público | ✅ 200 |
+| 🧑‍🎓 **User** | `GET` | `/api/users/profile` | Obtiene la información del usuario autenticado. | Privado (JWT) | ✅ 200 |
+| 📚 **Materia** | `POST` | `/api/materias` | Creación de una nueva materia. | Profesor/Admin | ✅ 201 |
+| 📚 **Materia** | `GET` | `/api/materias` | Listado de materias del profesor logueado. | Profesor | ✅ 200 |
+| 📝 **Tarea** | `POST` | `/api/tareas` | Creación de tarea para una materia. | Profesor/Admin | ✅ 201 |
+| 📝 **Tarea** | `GET` | `/api/tareas` | Listado de tareas asignadas al alumno. | Alumno | ✅ 200 |
+| 🎓 **Matricula** | `POST` | `/api/matriculas` | Matricular a un alumno en una materia. | Admin/Profesor | ✅ 201 |
+| 📦 **Entrega** | `POST` | `/api/entregas` | Subida de trabajo/tarea por el alumno. | Alumno | ✅ 201 |
 
-📌 **Ventaja:** Ideal para documentación tipo Postman o Swagger, muy legible para devs.
-
----
-
-## ⚙️ **Opción 3 — Expandibles con `<details>` (moderno y limpio)**  
-Este formato usa etiquetas HTML que GitHub interpreta correctamente.  
-Podés colapsar o expandir los módulos.
-
-```markdown
-## 🌐 API Endpoints
-
-<details>
-<summary>👤 <b>USER</b></summary>
-
-- **POST** `/api/users/register` → Registro de nuevo usuario *(Público)*  
-- **POST** `/api/users/login` → Autenticación y token JWT *(Público)*  
-- **GET** `/api/users/profile` → Perfil del usuario *(Privado JWT)*  
-
-</details>
-
-<details>
-<summary>📘 <b>MATERIA</b></summary>
-
-- **POST** `/api/materias` → Crear materia *(Profesor/Admin)*  
-- **GET** `/api/materias` → Listar materias *(Profesor)*  
-
-</details>
-
-<details>
-<summary>📝 <b>TAREA</b></summary>
-
-- **POST** `/api/tareas` → Crear tarea *(Profesor/Admin)*  
-- **GET** `/api/tareas` → Ver tareas del alumno *(Alumno)*  
-
-</details>
-
-<details>
-<summary>🎓 <b>MATRÍCULA</b></summary>
-
-- **POST** `/api/matriculas` → Matricular alumno *(Admin/Profesor)*  
-
-</details>
-
-<details>
-<summary>📦 <b>ENTREGA</b></summary>
-
-- **POST** `/api/entregas` → Subida de tarea *(Alumno)*  
-
-</details>
 
 
 
