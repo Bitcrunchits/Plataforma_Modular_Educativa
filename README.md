@@ -115,12 +115,10 @@ La inicialización realizará la conexión a la base de datos y sincronizará la
 | 🎓 **Matricula** | `POST` | `/api/matriculas` | Matricular a un alumno en una materia. | Admin/Profesor | ✅ 201 |
 | 📦 **Entrega** | `POST` | `/api/entregas` | Subida de trabajo/tarea por el alumno. | Alumno | ✅ 201 |
 
-
-
-
 👨‍💻 Autor
 Equipo de desarrollo DivH1 del ITS. Cipolletti
 Burdiles Adrián.
 Espagnolo Emiliano.
-Soto Agustín.
-            Proyecto educativo modular desarrollado con enfoque en escalabilidad, mantenibilidad y buenas prácticas en Node.js. Para presentar como trabajo práctico de la materia BACKEND Liderada por el Profesor Aqueveque Roverto.
+**Soto Agustín.
+            Proyecto educativo modular desarrollado con enfoque en escalabilidad, mantenibilidad y buenas prácticas en Node.js.
+Para presentar como trabajo práctico de la materia BACKEND Liderada por el Profesor Aqueveque Roberto.
