@@ -13,6 +13,7 @@
         console.log('✅ Conectado:', socket.id);
         socket.emit('hello', '¡Hola servidor!');
       });
+      
 
       socket.on('response', (msg) => {
         console.log('📩 Respuesta del servidor:', msg);
@@ -20,6 +21,11 @@
 
       socket.on('disconnect', () => {
         console.log('❌ Desconectado');
+
+      });
+      
+      socket.on('userRegistered', (data) => {
+         console.log('🎉 Nuevo usuario registrado:', data);
       });
     </script>
   </body>

@@ -1,11 +1,13 @@
 
 
 import { registerUser, loginUser } from './user.service.js';
+import { getSocketInstance } from '../../providers/socket.provider.js';
 
 /**
  * Registra un nuevo usuario.
- * @route POST /users/register
+ *@route POST /users/register
  */
+
 export const register = async (req, res, next) => {
     try {
 
@@ -20,7 +22,6 @@ export const register = async (req, res, next) => {
         });
 
     } catch (error) {
-        // Pasa el error (ej. email ya registrado) al middleware de errores
         next(error);
     }
 };
