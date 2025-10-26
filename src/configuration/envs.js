@@ -12,6 +12,7 @@ const envsSchema = joi.object({
     DB_NAME: joi.string().required(),
     DB_TYPE: joi.string().valid('mysql').required(),
     // JWT_SECRET: joi.string().required(),
+    JWT_EXPIRY_TIME: joi.string().required(),
   })
 
   .unknown(true); // que me traiga las variables desconocidas..IMPORTANTE
@@ -29,5 +30,6 @@ export const envs = {
   // DB_PASSWORD: envsVar.DB_PASSWORD,
   DB_NAME: envsVar.DB_NAME,
   DB_TYPE: envsVar.DB_TYPE,
-  JWT_SECRET: envsVar.JWT_SECRET
+  JWT_SECRET: envsVar.JWT_SECRET,
+  JWT_EXPIRY_TIME: envsVar.JWT_EXPIRY_TIME
 };

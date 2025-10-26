@@ -45,7 +45,7 @@ const MateriaEntity = new EntitySchema({
     matriculas: {
       target: 'Matricula',
       type: 'one-to-many',
-      inverseSide: 'materia',
+      inverseSide: 'id_materia',
     },
     tareas: {
       target: 'Tarea',

@@ -6,6 +6,16 @@ import multer from 'multer'; // ✅ AGREGAR ESTE IMPORT
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+import './configuration/passport.js'; 
+import { envs } from './configuration/envs.js';
+
+// --- Importación de Routers ---
+// ¡Importamos sin llaves porque user.route.js y tarea.route.js usan 'export default'!
+import userRouter from './module/user/user.route.js'; 
+import tareaRouter from './module/tarea/tarea.route.js'; 
+// import entregaRouter from './module/entrega/entrega.route.js'; 
+import matriculaRouter from './module/matricula/matricula.route.js';
+import materiaRouter from './module/materia/materia.route.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +41,11 @@ app.get('/', (req, res) => {
         }
     });
 });
+app.use('/api/users', userRouter); 
+app.use('/api/tareas', tareaRouter); 
+// app.use('/api/entregas', entregaRouter);
+app.use('/api/matriculas', matriculaRouter);
+app.use('/api/materias', materiaRouter); 
 
 // Manejo de errores ✅ CORREGIDO (multer ahora está importado)
 app.use((error, req, res, next) => {

@@ -5,7 +5,7 @@ const EntregaEntity = new EntitySchema({
     name: 'Entrega',
     tableName: 'entregas',
     columns: {
-        id: {
+        id_tarea: {
             name: 'id_entrega', // Renombrado a id_entrega (PK)
             type: 'int',
             primary: true,

@@ -1,70 +1,124 @@
-# Nombre del Proyecto:
-Escuela3
+# 🎓 Plataforma Modular Educativa (Backend)
 
-[![Licencia](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Estado del Proyecto](https://img.shields.io/badge/Status-En%20Desarrollo-orange)](https://shields.io/)
+![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)
+![Express](https://img.shields.io/badge/Express.js-Framework-lightgrey?logo=express)
+![TypeORM](https://img.shields.io/badge/TypeORM-Data%20Mapper-orange?logo=typeorm)
+![MySQL](https://img.shields.io/badge/MySQL-Database-blue?logo=mysql)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-Realtime-black?logo=socket.io)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## Descripción
-Este proyecto es una API RESTful construida con Node.js y Express, diseñada para gestionar una Escuela con profesores, alumnos, matrículas y tareas por materias. Ofrece endpoints para crear, leer y actualizar Materias, Tareas, Matriculas y Ususarios con roles
+---
 
-## Tecnologías Utilizadas
+## 🏆 Nombre del Proyecto
+**Plataforma Modular Educativa (Backend)**
 
-*   [Node.js](https://nodejs.org/)
-*   [Express](https://expressjs.com/)
-*   [MySQL2](https://github.com/sidorares/node-mysql2) (o la librería de base de datos que estés utilizando)
-*   [Joi](https://joi.dev/) (para validación de esquemas)
-*   [Dotenv](https://www.npmjs.com/package/dotenv) (para gestionar variables de entorno)
+---
 
-## Pre-requisitos
+## 📜 Licencia
+Este proyecto se distribuye bajo la **licencia MIT**.
 
-Antes de comenzar, asegúrate de tener instalado lo siguiente:
+---
 
-*   [Node.js] (versión 16 o superior)
-*   [npm]
-*   [MySQL2]
-*   [Nodemon]
+## 📝 Descripción del Proyecto
+Implementación del **backend** de una **plataforma educativa modular**, desarrollada bajo la arquitectura **Feature-Sliced Design (Módulos por Dominio)** en **Node.js**.
 
+Su estructura modular permite escalar y mantener fácilmente el sistema, separando la lógica de negocio en dominios como usuarios, materias, tareas, etc.
 
-## Instalación
+---
 
-1.  Clona el repositorio:
+## 🚀 Evolución del Proyecto
 
-    ```bash
-    git clone [URL del repositorio]
-    cd [nombre del repositorio]
-    ```
+### 🔹 **Fase Inicial**
+Se centró en la implementación de la capa de persistencia y la seguridad base:
 
-2.  Instala las dependencias:
+- **Configuración de la Base de Datos:** TypeORM + MySQL/MariaDB para la gestión de entidades (`User`, `Materia`, etc.).  
+- **Arquitectura Modular:** Separación en *controllers*, *services*, *entities* y *DTOs* por módulo.  
+- **Seguridad Base:** Autenticación mediante **Passport.js** y **JWT** para proteger rutas.  
 
-    ```bash
-    npm install
-    ```
+### 🔹 **Fase Avanzada**
+Posteriormente se integraron librerías y servicios avanzados, aportando robustez y comunicación en tiempo real:
 
-3.  Configura las variables de entorno:
+- **Validación de Esquemas:** Implementación de **Joi** y *validator.middleware* para validar los DTOs.  
+- **Comunicación en Tiempo Real:** Configuración de **Socket.IO** para notificaciones y WebSockets.  
+- **Gestión de Entidades:** Implementación completa de las cinco entidades (`User`, `Materia`, `Matricula`, `Tarea`, `Entrega`), con relaciones **One-to-Many** y **Many-to-One** en TypeORM.
 
-    *   Crea un archivo `.env` en la raíz del proyecto.
-    *   Define las siguientes variables de entorno:
+---
 
-        ```
-        DB_HOST=localhost
-        DB_USER=tu_usuario
-        DB_PASS=tu_password
-        DB_PORT=3306
-        DATABASE=tu_base_de_datos
-        
+## 🛠️ Tecnologías Utilizadas
 
+| **Componente** | **Tecnología** | **Propósito** |
+|----------------|----------------|----------------|
+| Lenguaje | JavaScript (ESM) | Base del desarrollo backend |
+| Framework | Node.js / Express | Servidor HTTP y enrutamiento |
+| ORM | TypeORM | Capa de persistencia y mapeo relacional |
+| Base de Datos | MySQL / MariaDB | Almacenamiento de datos |
+| Validación | Joi | Validación estricta de DTOs |
+| Seguridad | Passport.js / JWT | Autenticación y autorización |
+| Tiempo Real | Socket.IO | Comunicación bidireccional (WebSockets) |
 
-## Uso
+---
 
-Para iniciar realiza los siguientes pasos:
+## ⚙️ Prerrequisitos
 
+Para ejecutar el proyecto localmente necesitarás:
 
-1) Crear la base de datos, vacía solo el nombre en XAMPP o medio ambiente elegido.
-    a)Abrir el archivo SEED2 y en la linea de codigo 16 (await connection.query('USE nombre base de datos creada ;');)
-    colocamos el nombre de la DB vacia que creamos,  ej: await connection.query('USE escuela ;');
-2) Crear un archivo .env y agregar el nombre de la DB junto con las variables de entorno.
-3) iniciar el servidor 
-npm run dev
--- al iniciar el servidor se ejecutará el archivo SEED2 desde index.js. Este SEED genera el contenido de la DB completa
--- incluyendo el admin con las claves genericas "que deben ser cambiadas al ingresar".
-4) Luego de confirmado y que todo este en orden sin fallos DEBEMOS comentar la ejecución del SEED2 en el archivo index linea de codigo 13. De esta manera evitaremos que los datos de la base de datos se sobre escriban al iniciar el servidor cada vez ya que el SEED2 contiene unos comandos que drenan cuanquier dato de la db antes de inyectar los que tiene programado, evitando conflictos.
+- **Node.js** (versión 18 o superior)
+- **MySQL / MariaDB** (o un contenedor Docker)
+- **npm** o **yarn**
+
+---
+
+## 🚀 Instalación y Configuración
+
+### 1️⃣ Clonar el Repositorio
+```bash
+git clone <URL_DEL_REPOSITORIO>
+
+2️⃣ Instalar Dependencias
+
+cd Plataforma-Modular-Educativa-Backend
+npm install
+
+3️⃣ Configurar Variables de Entorno
+
+Crea un archivo llamado .env en la raíz del proyecto.
+Estas variables son validadas estrictamente por src/configuration/envs.js.
+# General
+PORT=3000
+
+# Base de Datos (Asegúrate de que MySQL esté corriendo)
+DB_TYPE=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DATABASE=escuela_db # Mapeado internamente a DB_NAME
+
+# Seguridad JWT
+JWT_SECRET=super-secreto-y-largo-de-mas-de-256-bits
+
+4️⃣ Ejecutar el Servidor
+node src/index.js
+La inicialización realizará la conexión a la base de datos y sincronizará las entidades (creando las tablas si no existen).
+
+### 🌐 Endpoints Principales
+
+| **Módulo** | **Método** | **Ruta** | **Descripción** | **Rol Requerido** | **Estado** |
+|-------------|-------------|-----------|------------------|-------------------|-------------|
+| 🧑‍🎓 **User** | `POST` | `/api/users/register` | Registro de un nuevo usuario (Alumno, Profesor o Admin). | Público | ✅ 201 |
+| 🧑‍🎓 **User** | `POST` | `/api/users/login` | Autenticación y obtención de un token JWT. | Público | ✅ 200 |
+| 🧑‍🎓 **User** | `GET` | `/api/users/profile` | Obtiene la información del usuario autenticado. | Privado (JWT) | ✅ 200 |
+| 📚 **Materia** | `POST` | `/api/materias` | Creación de una nueva materia. | Profesor/Admin | ✅ 201 |
+| 📚 **Materia** | `GET` | `/api/materias` | Listado de materias del profesor logueado. | Profesor | ✅ 200 |
+| 📝 **Tarea** | `POST` | `/api/tareas` | Creación de tarea para una materia. | Profesor/Admin | ✅ 201 |
+| 📝 **Tarea** | `GET` | `/api/tareas` | Listado de tareas asignadas al alumno. | Alumno | ✅ 200 |
+| 🎓 **Matricula** | `POST` | `/api/matriculas` | Matricular a un alumno en una materia. | Admin/Profesor | ✅ 201 |
+| 📦 **Entrega** | `POST` | `/api/entregas` | Subida de trabajo/tarea por el alumno. | Alumno | ✅ 201 |
+
+👨‍💻 Autor
+Equipo de desarrollo DivH1 del ITS. Cipolletti
+Burdiles Adrián.
+Espagnolo Emiliano.
+**Soto Agustín.
+            Proyecto educativo modular desarrollado con enfoque en escalabilidad, mantenibilidad y buenas prácticas en Node.js.
+Para presentar como trabajo práctico de la materia BACKEND Liderada por el Profesor Aqueveque Roberto.

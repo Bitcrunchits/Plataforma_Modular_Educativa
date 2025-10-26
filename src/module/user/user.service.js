@@ -1,5 +1,5 @@
 import { AppDataSource } from "../../providers/database.provider.js";
-import UserEntity from "./User.entity.js"; 
+import UserEntity from "./User.entity.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { envs } from "../../configuration/envs.js";
@@ -35,13 +35,13 @@ export const registerUser = async (userData) => {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
     // 3. Crear el nuevo usuario (TypeORM asigna el rol 'alumno' por defecto según la entidad)
-   const newUser = userRepository.create({
-    nombre: userData.nombre,
-    username: userData.username,
-    email: userData.email,
-    password: hashedPassword,
-    rol: userData.rol || 'alumno', 
-});
+    const newUser = userRepository.create({
+        nombre: userData.nombre,
+        username: userData.username,
+        email: userData.email,
+        password: hashedPassword,
+        rol: userData.rol || 'alumno',
+    });
 
     // 4. Guardar el usuario en la base de datos
     await userRepository.save(newUser);
@@ -49,9 +49,9 @@ export const registerUser = async (userData) => {
     // 5. Generar JWT (Usamos id_usuario y rol)
     const token = jwt.sign(
         {
-            id: newUser.id_usuario, 
+            id: newUser.id_usuario,
             email: newUser.email,
-            rol: newUser.rol 
+            rol: newUser.rol
         },
         envs.JWT_SECRET,
         { expiresIn: '1h' }
@@ -82,13 +82,13 @@ export const loginUser = async (credentials) => {
     // 1. Buscar usuario por email
     const user = await userRepository.findOneBy({ email: credentials.email });
     if (!user) {
-        throw new Error('Credenciales inválidas.'); 
+        throw new Error('Credenciales inválidas.');
     }
 
     // 2. Comparar contraseñas
     const isMatch = await bcrypt.compare(credentials.password, user.password);
     if (!isMatch) {
-        throw new Error('Credenciales inválidas.'); 
+        throw new Error('Credenciales inválidas.');
     }
 
     // 3. Generar JWT
@@ -99,7 +99,10 @@ export const loginUser = async (credentials) => {
             rol: user.rol
         },
         envs.JWT_SECRET,
-        { expiresIn: '1d' }
+        {
+            
+            expiresIn: envs.JWT_EXPIRY_TIME
+        }
     );
 
     // Retornar datos seguros

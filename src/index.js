@@ -4,6 +4,7 @@ import app from './app.js';
 import { initializeDatabase } from './providers/database.provider.js'; 
 import { envs } from './configuration/envs.js'; 
 import { initializeSocket } from './socket.handler.js'; 
+import { setSocketInstance } from './providers/socket.provider.js';
 
 // Función principal asíncrona para inicializar la aplicación
 async function main() {
@@ -16,16 +17,17 @@ async function main() {
         // 2. CREACIÓN DEL SERVIDOR HTTP Y SOCKET.IO
         const server = http.createServer(app);
 
-        // Inicializar Socket.IO
-        const io = new Server(server, {
-            cors: {
-                origin: envs.CLIENT_URL, 
-                methods: ['GET', 'POST'],
-            },
-        });
+        // // 3. INICIALIZAR LÓGICA DE SOCKETS
+       
+            const io = new Server(server, {
+                cors: {
+                    origin: ['http://localhost:3000', 'http://127.0.0.1:5500'], // ← agregá este
+                    methods: ['GET', 'POST'],
+                },
+            });
 
-        // 3. INICIALIZAR LÓGICA DE SOCKETS
-        initializeSocket(io);
+            setSocketInstance(io); // ← Guardamos la instancia
+            initializeSocket(io);
 
 
         // 4. INICIO DEL SERVIDOR
