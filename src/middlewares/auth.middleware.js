@@ -58,8 +58,7 @@ export const checkRole = (allowedRoles) => (req, res, next) => {
     
     // NOTA: Asumimos que authMiddleware ya se ejecutó y adjuntó req.user
     
-    // 1. Verificar si el usuario está presente (AuthMiddleware debió atrapar esto,
-    // pero es un buen chequeo defensivo).
+    
     if (!req.user) {
         // Reemplazo de ApplicationError por Error estándar con status
         const unauthorizedError = new Error("Acceso denegado. Se requiere autenticación previa.");

@@ -5,12 +5,31 @@ import { getSocketInstance } from '../../providers/socket.provider.js';
 
 /**
  * Registra un nuevo usuario.
+ * Controla que solo los 'admin' puedan crear roles 'profesor' o 'admin'.
  *@route POST /users/register
  */
-
 export const register = async (req, res, next) => {
     try {
+        // 1. Obtener el rol que se intenta crear (del body)
+        const { rol } = req.body; 
+        
+        // 2. Obtener el rol del usuario que realiza la llamada (logueado)
+        // Usamos optional chaining para evitar errores si req.user no existe (aunque debería si se usa authMiddleware)
+        const callerRole = req.user?.rol; 
 
+        // --- Lógica de Autorización de Creación de Roles ---
+        
+        // Si el rol a crear es un rol elevado, requiere que el caller sea 'admin'
+        if (rol === 'admin') {
+            
+            if (!callerRole || callerRole !== 'admin') {
+                const forbiddenError = new Error(`Acceso denegado. Solo un administrador puede crear usuarios con el rol '${rol}'.`);
+                forbiddenError.status = 403; // Forbidden
+                return next(forbiddenError);
+            }
+        } 
+        
+        // Mantenemos la línea de desestructuración original tal como la deseas:
         const { user, token } = await registerUser(req.body);
 
 
@@ -66,3 +85,4 @@ export const getProfile = (req, res, next) => {
         next(error);
     }
 };
+
