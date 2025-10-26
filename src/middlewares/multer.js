@@ -1,64 +1,57 @@
 import multer from 'multer';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Configuración de almacenamiento
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'src/uploads/');
+        cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
     },
     filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const uniqueName = uuidv4() + ext;
+        const ext = path.extname(file.originalname); // Extensión original
+        const uniqueName = uuidv4() + ext; // Nombre único con UUID + extensión
         cb(null, uniqueName);
     },
 });
 
-// Filtro mejorado para tipos de archivo
+// Validación de tipos de archivo permitidos
 const fileFilter = (req, file, cb) => {
-    // Lista de extensiones permitidas
-    const allowedExtensions = [
-        // Imágenes
-        '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp',
+    const allowedMimes = [
         // Documentos
-        '.pdf', 
-        // Word
-        '.doc', '.docx', '.dot', '.dotx',
-        // Excel
-        '.xls', '.xlsx', '.xlsm', '.csv',
-        // PowerPoint ✅ AGREGADOS
-        '.ppt', '.pptx', '.pps', '.ppsx', '.pot', '.potx',
+        'application/pdf', // PDF
+        'application/msword', // DOC
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+        'application/vnd.ms-powerpoint', // PPT
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PPTX
+        'application/vnd.ms-excel', // XLS
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
+        
+        // Imágenes
+        'image/jpeg',
+        'image/jpg', 
+        'image/png',
+        'image/gif',
+        
         // Texto
-        '.txt', '.rtf',
-        // Comprimidos
-        '.zip', '.rar'
+        'text/plain',
+        'application/rtf'
     ];
 
-    const fileExtension = path.extname(file.originalname).toLowerCase();
-    
-    if (allowedExtensions.includes(fileExtension)) {
+    if (allowedMimes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error(`Tipo de archivo no permitido: ${fileExtension}. Extensiones permitidas: ${allowedExtensions.join(', ')}`), false);
+        cb(new Error(`Tipo de archivo no permitido: ${file.mimetype}. Formatos permitidos: PDF, Word, Excel, PowerPoint, imágenes y texto.`), false);
     }
 };
 
+// Configuración de Multer
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 15 * 1024 * 1024, // 15MB (aumentado para PowerPoint)
-        files: 10 // Máximo 10 archivos en upload múltiple
+        fileSize: 15 * 1024 * 1024, // Límite de 15MB
+        files: 5 // Máximo 5 archivos por petición
     }
 });
-
-// Middlewares preconfigurados para fácil uso
-export const uploadSingle = upload.single('file');
-export const uploadMultiple = upload.array('files', 10);
-export const uploadAny = upload.any();
 
 export default upload;
