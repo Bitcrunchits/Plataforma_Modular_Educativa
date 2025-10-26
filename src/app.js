@@ -1,11 +1,7 @@
 import express from 'express';
-import uploadRouter from './routes/upload.router.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import multer from 'multer'; // ✅ AGREGAR ESTE IMPORT
+import cors from 'cors';
+import passport from 'passport'; 
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 import './configuration/passport.js'; 
 import { envs } from './configuration/envs.js';
 
@@ -18,62 +14,32 @@ import matriculaRouter from './module/matricula/matricula.route.js';
 import materiaRouter from './module/materia/materia.route.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middlewares básicos
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// --- CONFIGURACIÓN DE MIDDLEWARES ---
 
-// Servir archivos estáticos desde la carpeta uploads
-app.use('/uploads', express.static('src/uploads'));
+app.use(express.json()); // Middleware para parsear el body de las peticiones JSON
+app.use(cors({ origin: envs.CLIENT_URL || '*' })); // CORS básico
 
-// Usar las rutas de upload
-app.use('/api', uploadRouter);
+// Inicializa Passport para manejar la autenticación JWT
+app.use(passport.initialize()); // <-- Usamos el objeto passport importado
 
-// Ruta de prueba
-app.get('/', (req, res) => {
-    res.json({
-        mensaje: 'Servidor funcionando',
-        endpoints: {
-            formulario: '/api/upload (GET)',
-            subirArchivo: '/api/upload (POST)',
-            subirMultiples: '/api/upload-multiple (POST)'
-        }
-    });
-});
+// --- MONTAJE DE RUTAS ---
+app.get('/', (req, res) => { res.send('API funcionando.'); }); 
+
+
 app.use('/api/users', userRouter); 
 app.use('/api/tareas', tareaRouter); 
 // app.use('/api/entregas', entregaRouter);
 app.use('/api/matriculas', matriculaRouter);
 app.use('/api/materias', materiaRouter); 
 
-// Manejo de errores ✅ CORREGIDO (multer ahora está importado)
-app.use((error, req, res, next) => {
-    if (error instanceof multer.MulterError) {
-        if (error.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({
-                error: 'Archivo demasiado grande',
-                detalle: 'El tamaño máximo permitido es 5MB'
-            });
-        }
-    }
-    res.status(500).json({
-        error: 'Error interno del servidor',
-        detalle: error.message
-    });
+
+app.use((err, req, res, next) => {
+    console.error(' Error no controlado:', err.stack);
+    const status = err.status || 500;
+    const message = err.message || 'Error interno del servidor';
+    res.status(status).json({ success: false, message });
 });
 
-// Manejo de rutas no encontradas
-app.use((req, res) => {
-    res.status(404).json({
-        error: 'Ruta no encontrada'
-    });
-});
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-    console.log(`- Formulario de upload: http://localhost:${PORT}/api/upload`);
-});
-
-// ✅ AGREGAR ESTO AL FINAL:
 export default app;
