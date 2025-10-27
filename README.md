@@ -118,7 +118,7 @@ La inicialización realizará la conexión a la base de datos y sincronizará la
 👨‍💻 Autor
 Equipo de desarrollo DivH1 del ITS. Cipolletti
 Burdiles Adrián.
-Espagnolo Emiliano.
-**Soto Agustín.
+Spagnolo Emiliano.
+Soto Agustín.
             Proyecto educativo modular desarrollado con enfoque en escalabilidad, mantenibilidad y buenas prácticas en Node.js.
 Para presentar como trabajo práctico de la materia BACKEND Liderada por el Profesor Aqueveque Roberto.
