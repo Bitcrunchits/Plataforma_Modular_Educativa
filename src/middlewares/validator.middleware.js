@@ -32,3 +32,6 @@ export const validatorMiddleware = (schema, property) => {
         next();
     };
 };
+export const validate = (schema) => {
+    return validatorMiddleware(schema, 'body');
+};
