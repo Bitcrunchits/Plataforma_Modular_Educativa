@@ -4,7 +4,9 @@ import {
     getMatriculasByUserIdController, 
     getMatriculasByMateriaController 
 } from './matricula.controller.js'; 
+import { validate } from '../../middlewares/validator.middleware.js'; 
 import { authMiddleware, checkRole } from '../../middlewares/auth.middleware.js'; // <-- Importación corregida y unificada
+import { createMatriculaSchema } from './schema/Matricula.schema.js';
 
 
 const matriculaRouter = Router();
@@ -20,6 +22,7 @@ matriculaRouter.post(
     '/',
     authMiddleware, // 1. Autenticar (usa req.user)
     checkRole(['profesor', 'admin']), // 2. Verificar rol (usa req.user.rol)
+    validate(createMatriculaSchema),
     createMatriculaController
 );
 

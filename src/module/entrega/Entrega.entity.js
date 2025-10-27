@@ -1,61 +1,92 @@
-
 import { EntitySchema } from 'typeorm';
 
 const EntregaEntity = new EntitySchema({
     name: 'Entrega',
     tableName: 'entregas',
     columns: {
-        id_tarea: {
-            name: 'id_entrega', // Renombrado a id_entrega (PK)
+        
+        id_entrega: {
             type: 'int',
             primary: true,
             generated: true,
         },
-        fecha_entrega: { // Fecha en que el alumno hizo la entrega
+        
+        // --- CAMPOS DE LA ENTREGA REALIZADA POR EL ALUMNO ---
+        archivoAdjuntoUrl: { 
+            name: 'archivo_adjunto_url',
+            type: 'varchar',
+            length: 500,
+            nullable: false,
+        },
+        comentarioAlumno: { // Comentario opcional del alumno al entregar
+            name: 'comentario_alumno',
+            type: 'text',
+            nullable: true, 
+        },
+        fechaEntrega: { // Fecha en que el alumno hizo la entrega
+            name: 'fecha_entrega',
             type: 'timestamp',
             createDate: true,
         },
+        
+        // --- CAMPOS DE CALIFICACIÓN
         calificacion: {
             type: 'decimal',
             precision: 5,
             scale: 2,
-            nullable: true, // Puede ser null si aún no se ha calificado
+            nullable: true, // Nulo hasta que el profesor califique
         },
-        comentario: {
+        comentarioProfesor: { // Comentario/Feedback del profesor
+            name: 'comentario_profesor',
             type: 'text',
-            nullable: true, // Comentario del profesor al calificar
+            nullable: true, 
         },
-        
-        // Claves Foráneas
-        id_tarea: {
-            type: 'int',
-            nullable: false, // Una entrega siempre debe estar asociada a una tarea
+        fechaCalificacion: { // Fecha en que se calificó
+            name: 'fecha_calificacion',
+            type: 'timestamp',
+            nullable: true, 
         },
-        id_usuario: {
+
+        // --- CLAVES FORÁNEAS 
+        id_tarea: { // FK a Tarea
             type: 'int',
             nullable: false, 
         },
+        id_alumno: { // FK al Usuario que hace la entrega
+            type: 'int',
+            nullable: false, 
+        },
+        id_profesor_calificador: { // FK al Usuario que califica
+            type: 'int',
+            nullable: true, // Es nulo hasta que se califica
+        },
 
+        // --- TIMESTAMPS AUTOMÁTICOS ---
         updatedAt: {
+            name: 'updated_at',
             type: 'timestamp',
             updateDate: true,
         },
     },
     relations: {
-        // Relación con Tarea (Una Entrega es para UNA Tarea)
         tarea: {
             type: 'many-to-one',
             target: 'Tarea',
-            // ¡CORRECCIÓN CLAVE! Referenciamos la PROPIEDAD 'id' de la entidad Tarea
             joinColumn: { name: 'id_tarea', referencedColumnName: 'id' }, 
             onDelete: 'CASCADE',
         },
-        // Relación con Usuario (Un alumno hace UNA Entrega)
         alumno: {
             type: 'many-to-one',
             target: 'User',
-            joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' },
+            joinColumn: { name: 'id_alumno', referencedColumnName: 'id_usuario' },
             onDelete: 'CASCADE',
+        },
+        profesorCalificador: { 
+            type: 'many-to-one',
+            target: 'User',
+            joinColumn: { name: 'id_profesor_calificador', referencedColumnName: 'id_usuario' },
+            onDelete: 'SET NULL', 
+            nullable: true,
         },
     },
 });

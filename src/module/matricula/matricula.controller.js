@@ -17,14 +17,7 @@ export const createMatriculaController = async (req, res, next) => {
     try {
         const { id_usuario, id_materia } = req.body;
 
-        // 1. Validación básica de datos de entrada
-        if (!id_usuario || !id_materia) {
-            const error = new Error("Faltan datos requeridos: se necesitan id_usuario (alumno) e id_materia.");
-            error.status = 400; // Bad Request
-            throw error;
-        }
-
-        // 2. Llamada al servicio
+        //. Llamada al servicio
         const matricula = await createMatricula({
             id_usuario: parseInt(id_usuario, 10),
             id_materia: parseInt(id_materia, 10),
@@ -57,8 +50,8 @@ export const createMatriculaController = async (req, res, next) => {
 export const getMatriculasByUserIdController = async (req, res, next) => {
     try {
         // El ID del usuario se obtiene del token JWT inyectado por authMiddleware
-        const idUsuario = req.user.id; 
-        
+        const idUsuario = req.user.id;
+
         const matriculas = await getMatriculasByUserId(idUsuario);
 
         res.status(200).json({
@@ -79,13 +72,13 @@ export const getMatriculasByMateriaController = async (req, res, next) => {
     try {
         // Obtiene el id de la materia de los parámetros de la ruta
         const idMateria = parseInt(req.params.id_materia, 10);
-        
+
         if (isNaN(idMateria)) {
             const error = new Error("ID de materia no válido.");
             error.status = 400; // Bad Request
             throw error;
         }
-        
+
         // Llama al servicio para obtener las matrículas
         const matriculas = await getMatriculasByMateriaId(idMateria);
 
