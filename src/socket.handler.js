@@ -15,7 +15,9 @@ export function initializeSocket(io) {
             // Responde al cliente que envió el mensaje
             socket.emit('response', '¡Hola de vuelta desde el servidor!');
         });
-
+        //  socket.on('loginUser', (data) => {//no funca
+        //  console.log('🎉 Nuevo usuario registrado:', data);
+        // });
         // Alguien se desconecta
         socket.on('disconnect', () => {
             console.log(`🔌 [SOCKET.IO] Cliente desconectado: ${socket.id}`);
