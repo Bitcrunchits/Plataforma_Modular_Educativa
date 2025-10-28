@@ -20,7 +20,7 @@ Este proyecto se distribuye bajo la **licencia MIT**.
 ---
 
 ## 📝 Descripción del Proyecto
-Implementación del **backend** de una plataforma educativa modular, desarrollada bajo la arquitectura **Feature-Sliced Design (Módulos por Dominio)** en **Node.js**.
+Implementación del **backend** de una plataforma educativa modular, desarrollada en **Node.js**.
 
 Su estructura modular permite escalar y mantener fácilmente el sistema, separando la lógica de negocio en dominios como usuarios, materias, tareas, etc.
 
