@@ -101,6 +101,28 @@ JWT_SECRET=super-secreto-y-largo-de-mas-de-256-bits
 node npm run dev
 La inicialización realizará la conexión a la base de datos y sincronizará las entidades (creando las tablas si no existen).
 
+## 🌐 Endpoints Principales (Rutas Definidas)
+
+| Módulo | Método | Ruta | Descripción | Rol Requerido | Estado |
+|---------|--------|------|--------------|----------------|---------|
+| 🧑‍🎓 User | **POST** | `/api/users/register` | Registro de un nuevo usuario (Alumno, Profesor o Admin). | Público | ✅ 201 |
+| 🧑‍🎓 User | **POST** | `/api/users/login` | Autenticación y obtención de un token JWT. | Público | ✅ 200 |
+| 🧑‍🎓 User | **GET** | `/api/users/profile` | Obtiene la información del usuario autenticado. | Privado (JWT) | ✅ 200 |
+| 📚 Materia | **POST** | `/api/materias` | Creación de una nueva materia. | Profesor/Admin | ✅ 201 |
+| 📚 Materia | **GET** | `/api/materias` | Listado de materias del profesor logueado. | Profesor | ✅ 200 |
+| 📝 Tarea | **POST** | `/api/tareas` | Creación de tarea para una materia. | Profesor/Admin | ✅ 201 |
+| 📝 Tarea | **GET** | `/api/tareas` | Listado de tareas asignadas al alumno (o todas, con filtros). | Alumno | ✅ 200 |
+| 🎓 Matricula | **POST** | `/api/matriculas` | Matricular a un alumno en una materia. | Admin/Profesor | ✅ 201 |
+| 🎓 Matricula | **GET** | `/api/matriculas/mine` | Obtiene las matrículas (materias) del usuario autenticado (Alumno). | Alumno | ✅ 200 |
+| 🎓 Matricula | **GET** | `/api/matriculas/by-materia/:id_materia` | Obtiene todos los alumnos matriculados en una materia específica. | Profesor/Admin | ✅ 200 |
+| 📦 Entrega | **POST** | `/api/entregas` | Subida de trabajo/tarea por el alumno (usa Multer). | Alumno | ✅ 201 |
+| 📦 Entrega | **GET** | `/api/entregas/tarea/:id_tarea` | Listar todas las entregas para una tarea. | Profesor/Admin | ✅ 200 |
+| 📦 Entrega | **POST** | `/api/entregas/:id_entrega/calificar` | Calificar una entrega específica. | Profesor/Admin | ✅ 200 |
+| 📦 Entrega | **GET** | `/api/entregas/:id_entrega` | Obtener detalles de una entrega específica. | Alumno/Profesor/Admin | ✅ 200 |
+| 📁 Archivos (Test) | **GET** | `/api/files/test-form` | Muestra un formulario HTML para probar la subida de archivos (Multer). | Público | ✅ 200 |
+| 📁 Archivos (Test) | **POST** | `/api/files/upload-single` | Endpoint de prueba para subir un archivo único (documento). | Público | ✅ 200 |
+
+
 💾 6. Integración de Subida de Archivos (Multer)
 
 El proyecto utiliza la librería Multer para gestionar la carga de archivos binarios, específicamente para las entregas de tareas.
@@ -120,7 +142,7 @@ Seleccionar el archivo y darle al boton de subir, si fue exitoso nos devolvera e
 Al enviarse correctamente, el archivo se guardará en la carpeta uploads/ en la raíz del proyecto.
 
 
-🔔 7. Integración Aislada de Socket.IO (Notificaciones)
+🔔 7. Integración de Socket.IO (Notificaciones)
 
 La implementación de Socket.IO en este proyecto es puntual y aislada, utilizada para gestionar notificaciones de eventos importantes (no un chat general).
 
@@ -134,7 +156,7 @@ El servidor escucha este evento y activa la lógica para enviar un email de bien
 
 Ejecutar el Servidor:
 
-Abrir Cliente HTML:
+Abrir el archivo  Cliente.HTML
 
 Archivo: src/cliente.html
 
