@@ -1,70 +1,190 @@
-# Nombre del Proyecto:
-Escuela3
+# 🎓 Plataforma Modular Educativa (Backend)
 
-[![Licencia](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Estado del Proyecto](https://img.shields.io/badge/Status-En%20Desarrollo-orange)](https://shields.io/)
+![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)
+![Express](https://img.shields.io/badge/Express.js-Framework-lightgrey?logo=express)
+![TypeORM](https://img.shields.io/badge/TypeORM-ORM-orange?logo=typeorm)
+![MySQL](https://img.shields.io/badge/MySQL-Database-blue?logo=mysql)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-Realtime-black?logo=socket.io)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## Descripción
-Este proyecto es una API RESTful construida con Node.js y Express, diseñada para gestionar una Escuela con profesores, alumnos, matrículas y tareas por materias. Ofrece endpoints para crear, leer y actualizar Materias, Tareas, Matriculas y Ususarios con roles
+---
 
-## Tecnologías Utilizadas
+## 🏆 Nombre del Proyecto
+**Plataforma Modular Educativa (Backend)**
 
-*   [Node.js](https://nodejs.org/)
-*   [Express](https://expressjs.com/)
-*   [MySQL2](https://github.com/sidorares/node-mysql2) (o la librería de base de datos que estés utilizando)
-*   [Joi](https://joi.dev/) (para validación de esquemas)
-*   [Dotenv](https://www.npmjs.com/package/dotenv) (para gestionar variables de entorno)
+---
 
-## Pre-requisitos
+## 📜 Licencia
+Este proyecto se distribuye bajo la **licencia MIT**.
 
-Antes de comenzar, asegúrate de tener instalado lo siguiente:
+---
 
-*   [Node.js] (versión 16 o superior)
-*   [npm]
-*   [MySQL2]
-*   [Nodemon]
+## 📝 Descripción del Proyecto
+Implementación del **backend** de una plataforma educativa modular, desarrollada bajo la arquitectura **Feature-Sliced Design (Módulos por Dominio)** en **Node.js**.
+
+Su estructura modular permite escalar y mantener fácilmente el sistema, separando la lógica de negocio en dominios como usuarios, materias, tareas, etc.
+
+---
+
+## 🚀 Evolución del Proyecto
+
+### 🔹 Fase Inicial
+Se centró en la implementación de la capa de persistencia y la seguridad base:
+
+- **Configuración de la Base de Datos:** TypeORM + MySQL/MariaDB para la gestión de entidades (`User`, `Materia`, etc.).  
+- **Arquitectura Modular:** Separación en *controllers*, *services*, *entities* y *DTOs* por módulo.  
+- **Seguridad Base:** Autenticación mediante **Passport.js** y **JWT** para proteger rutas.
+
+### 🔹 Fase Avanzada
+Posteriormente se integraron librerías y servicios avanzados, aportando robustez y comunicación en tiempo real:
+
+- **Validación de Esquemas:** Implementación de **Joi** y `validator.middleware` para validar los DTOs.  
+- **Comunicación en Tiempo Real:** Configuración de **Socket.IO** para notificaciones y WebSockets.  
+- **Gestión de Entidades:** Implementación completa de las cinco entidades (`User`, `Materia`, `Matricula`, `Tarea`, `Entrega`), con relaciones **One-to-Many** y **Many-to-One** en TypeORM.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+| **Componente** | **Tecnología** | **Propósito** |
+|----------------|----------------|----------------|
+| Lenguaje | JavaScript (ESM) | Base del desarrollo backend |
+| Framework | Node.js / Express | Servidor HTTP y enrutamiento |
+| ORM | TypeORM | Capa de persistencia y mapeo relacional |
+| Base de Datos | MySQL / MariaDB | Almacenamiento de datos |
+| Validación | Joi | Validación estricta de DTOs |
+| Seguridad | Passport.js / JWT | Autenticación y autorización |
+| Tiempo Real | Socket.IO | Comunicación bidireccional (WebSockets) |
+
+---
+
+## ⚙️ Prerrequisitos
+
+Para ejecutar el proyecto localmente necesitarás:
+
+- **Node.js** (versión 18 o superior)
+- **MySQL / MariaDB** (o un contenedor Docker)
+- **npm** o **yarn**
+
+---
+
+## 🚀 Instalación y Configuración
+
+### 1️⃣ Clonar el Repositorio
+```bash
+git clone <URL_DEL_REPOSITORIO>
+
+2️⃣ Instalar Dependencias
+cd Plataforma-Modular-Educativa-Backend
+npm install
+
+3️⃣ Configurar Variables de Entorno
+
+Crea un archivo llamado .env en la raíz del proyecto.
+Estas variables son validadas estrictamente por src/configuration/envs.js.
+
+# General
+PORT=3000
+
+# Base de Datos (Asegúrate de que MySQL esté corriendo)
+DB_TYPE=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DATABASE=escuela_db # Mapeado internamente a DB_NAME
+
+# Seguridad JWT
+JWT_SECRET=super-secreto-y-largo-de-mas-de-256-bits
+
+4️⃣ Ejecutar el Servidor
+node npm run dev
+La inicialización realizará la conexión a la base de datos y sincronizará las entidades (creando las tablas si no existen).
+
+💾 6. Integración de Subida de Archivos (Multer)
+
+El proyecto utiliza la librería Multer para gestionar la carga de archivos binarios, específicamente para las entregas de tareas.
+Esto asegura el manejo correcto de multipart/form-data y el almacenamiento seguro de los archivos en el servidor.
+
+📤 Ruta Asignada
+
+La ruta principal para la subida de archivos es:
+POST /api/files
+
+🧪 Cómo Probar la Subida de Archivos
+
+Cliente API (Postman o Insomnia)
+
+Método y URL: POST http://localhost:3000/api/files/test-form
+
+Body Type: form-data
+
+Campo de Archivo:
+
+KEY: documento
+
+Tipo: File
+
+VALUE: Seleccionar archivo local.
+Al enviarse correctamente, el archivo se guardará en la carpeta uploads/ en la raíz del proyecto.
 
 
-## Instalación
+🔔 7. Integración Aislada de Socket.IO (Notificaciones)
 
-1.  Clona el repositorio:
+La implementación de Socket.IO en este proyecto es puntual y aislada, utilizada para gestionar notificaciones de eventos importantes (no un chat general).
 
-    ```bash
-    git clone [URL del repositorio]
-    cd [nombre del repositorio]
-    ```
+🎯 Funcionalidad Clave
 
-2.  Instala las dependencias:
+Emite un evento al registrar un nuevo usuario.
 
-    ```bash
-    npm install
-    ```
+El servidor escucha este evento y activa la lógica para enviar un email de bienvenida.
 
-3.  Configura las variables de entorno:
+🧪 Cómo Probar la Conexión de Socket.IO
 
-    *   Crea un archivo `.env` en la raíz del proyecto.
-    *   Define las siguientes variables de entorno:
+Ejecutar el Servidor:
 
-        ```
-        DB_HOST=localhost
-        DB_USER=tu_usuario
-        DB_PASS=tu_password
-        DB_PORT=3306
-        DATABASE=tu_base_de_datos
-        
+Abrir Cliente HTML:
+
+Archivo: src/cliente.html
+
+Usar un servidor local (por ejemplo: Open Live Server en VS Code)
+
+Monitorear la Consola del Navegador:
+
+Al conectarse, mostrará un mensaje de conexión exitosa.
+
+Registrar un Usuario:
+
+Endpoint: POST /api/users/register
+
+Verificación:
+
+Consola del Navegador: mostrará los datos del usuario registrado.
+
+Terminal de Node: mostrará el log del evento recibido y el envío del email.
 
 
-## Uso
+👨‍💻 Autores
 
-Para iniciar realiza los siguientes pasos:
+Equipo de desarrollo DivH1 del ITS Cipolletti
+
+Burdiles Adrián
+
+Spagnolo Emiliano
+
+Soto Agustín
+
+📘 Proyecto educativo modular desarrollado con enfoque en escalabilidad, mantenibilidad y buenas prácticas en Node.js.
+Presentado como Trabajo Práctico de la materia BACKEND, liderada por el Profesor Roberto Aqueveque.
 
 
-1) Crear la base de datos, vacía solo el nombre en XAMPP o medio ambiente elegido.
-    a)Abrir el archivo SEED2 y en la linea de codigo 16 (await connection.query('USE nombre base de datos creada ;');)
-    colocamos el nombre de la DB vacia que creamos,  ej: await connection.query('USE escuela ;');
-2) Crear un archivo .env y agregar el nombre de la DB junto con las variables de entorno.
-3) iniciar el servidor 
-npm run dev
--- al iniciar el servidor se ejecutará el archivo SEED2 desde index.js. Este SEED genera el contenido de la DB completa
--- incluyendo el admin con las claves genericas "que deben ser cambiadas al ingresar".
-4) Luego de confirmado y que todo este en orden sin fallos DEBEMOS comentar la ejecución del SEED2 en el archivo index linea de codigo 13. De esta manera evitaremos que los datos de la base de datos se sobre escriban al iniciar el servidor cada vez ya que el SEED2 contiene unos comandos que drenan cuanquier dato de la db antes de inyectar los que tiene programado, evitando conflictos.
+
+
+
+
+
+
+
+
+
+

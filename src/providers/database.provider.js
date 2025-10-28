@@ -1,40 +1,50 @@
-import { DataSource} from 'typeorm';
+import { DataSource } from "typeorm";
+// Importamos todas las entidades del proyecto
+import UserEntity from "../module/user/User.entity.js"; // CORREGIDO: Ruta limpia
+import MateriaEntity from "../module/materia/Materia.entity.js";
+import TareaEntity from "../module/tarea/Tarea.entity.js";
+import EntregaEntity from "../module/entrega/Entrega.entity.js";
+import MatriculaEntity from "../module/matricula/Matricula.entity.js";
 
-import UserEntity from '../module/entity/user/User.entity.js';
-import MateriaEntity from'../module/entity/materia/Materia.entity.js';
-import TareaEntity from '../module/entity/tarea/Tarea.entity.js';
-import EntregaEntity from '../module/entity/entrega/Entrega.entity.js';
-import MatriculaEntity from '../module/entity/matricula/Matricula.entity.js';
-
+// Importación de variables de entorno
 import { envs } from '../configuration/envs.js';
 
-//instancia de Typeorm DataSource
+
+/**
+ * @type {DataSource}
+ * Objeto principal de conexión y configuración de TypeORM.
+ */
 export const AppDataSource = new DataSource({
-    //credenciales de envs
     type: envs.DB_TYPE,
     host: envs.DB_HOST,
     port: envs.DB_PORT,
     username: envs.DB_USER,
-    database: envs.DATABASE,
     // password: envs.DB_PASSWORD,
-    //entitysSchemas
+    database: envs.DB_NAME, // Usamos DB_NAME del envs.js corregido
+
+    // Lista de todas las entidades para que TypeORM sepa qué tablas manejar
     entities: [
         UserEntity,
         MateriaEntity,
-        MatriculaEntity,
         TareaEntity,
         EntregaEntity,
+        MatriculaEntity
     ],
-    synchronize: envs.NODE_ENV === 'development',
-    logging: envs.NODE_ENV === 'development'
+    synchronize: true, //! Esto debe ser false en producción.
+    logging: false,
 });
 
-export const connectDB = async () => {
+/**
+ * Inicializa la conexión a la base de datos.
+ */
+export const initializeDatabase = async () => {
     try {
-        await AppDataSource.initialize();
-        console.log("Conexión a DB establecida y ORM listo")
+        if (!AppDataSource.isInitialized) {
+            await AppDataSource.initialize();
+            console.log(" Conexión a la Base de Datos establecida con éxito.");
+        }
     } catch (error) {
-        console.error(" Error de Conexión a DB:", error);
-        process.exit(1)
+        console.error(" Error al inicializar la base de datos:", error);
+        throw new Error("Fallo en la conexión de la base de datos.");
     }
-}
+};

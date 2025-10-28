@@ -5,12 +5,13 @@ const MatriculaEntity = new EntitySchema({
   tableName: 'matriculas',
   columns: {
     // ID: Automático e Incremental
-    id: {
+    id_matricula: {
+      name: 'id_matricula',
       primary: true,
       type: 'int',
       generated: 'increment',
     },
-    fechaInscripcion: {
+    fecha_matricula: {
       type: 'timestamp',
       createDate: true,
     },
@@ -19,27 +20,33 @@ const MatriculaEntity = new EntitySchema({
       default: 'activa',
     },
     // Claves foráneas (tipo 'int')
-    userId: {
-        type: 'int',
+    id_usuario: {
+      type: 'int',
+      nullable: false,
     },
-    materiaId: {
-        type: 'int',
+    id_materia: {
+      type: 'int',
+      nullable: false,
     }
   },
   relations: {
-    user: {
+     estudiante: {
       target: 'User',
       type: 'many-to-one',
-      joinColumn: true,
+      joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' }, // Referencia la columna local
       inverseSide: 'matriculas',
     },
     materia: {
       target: 'Materia',
       type: 'many-to-one',
-      joinColumn: true,
+      joinColumn: { name: 'id_materia', referencedColumnName: 'id_materia' }, // Referencia la columna local
       inverseSide: 'matriculas',
     },
   },
+  uniques: [{
+    name: 'unique_user_materia',
+    columns: ['id_usuario', 'id_materia'],
+  }]
 });
 
 export default MatriculaEntity;
