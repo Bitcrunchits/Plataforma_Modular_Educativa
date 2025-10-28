@@ -6,13 +6,13 @@ import './configuration/passport.js';
 import { envs } from './configuration/envs.js';
 
 // --- Importación de Routers ---
-// ¡Importamos sin llaves porque user.route.js y tarea.route.js usan 'export default'!
+
 import userRouter from './module/user/user.route.js'; 
 import tareaRouter from './module/tarea/tarea.route.js'; 
 import entregaRouter from './module/entrega/entrega.route.js'; 
 import matriculaRouter from './module/matricula/matricula.route.js';
 import materiaRouter from './module/materia/materia.route.js';
-
+import uploadRouter from './module/file-upload/upLoad.routes.js'; 
 const app = express();
 
 // --- CONFIGURACIÓN DE MIDDLEWARES ---
@@ -26,7 +26,7 @@ app.use(passport.initialize()); // <-- Usamos el objeto passport importado
 // --- MONTAJE DE RUTAS ---
 app.get('/', (req, res) => { res.send('API funcionando.'); }); 
 
-
+app.use('/api/files', uploadRouter); //ruta de subida de archivos 
 app.use('/api/users', userRouter); 
 app.use('/api/tareas', tareaRouter); 
 app.use('/api/entregas', entregaRouter);
