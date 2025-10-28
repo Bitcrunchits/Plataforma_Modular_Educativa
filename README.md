@@ -112,20 +112,11 @@ La ruta principal para la subida de archivos es:
 POST /api/files
 
 🧪 Cómo Probar la Subida de Archivos
+Abrir una navegador con la siguiente ruta y nos mostrará un formulario sencillo
+http://localhost:3000/api/files/test-form
+Seleccionar el archivo y darle al boton de subir, si fue exitoso nos devolvera el siguiente objeto:
+{"success":true,"message":"Archivo subido exitosamente.","fileInfo":{"filename":"documento-1761611702642-823872563.pdf","mimetype":"application/pdf","size":88925}}
 
-Cliente API (Postman o Insomnia)
-
-Método y URL: POST http://localhost:3000/api/files/test-form
-
-Body Type: form-data
-
-Campo de Archivo:
-
-KEY: documento
-
-Tipo: File
-
-VALUE: Seleccionar archivo local.
 Al enviarse correctamente, el archivo se guardará en la carpeta uploads/ en la raíz del proyecto.
 
 
